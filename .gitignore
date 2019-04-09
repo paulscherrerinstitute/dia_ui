@@ -1,4 +1,6 @@
+# build and dependencies
 build/
 node_modules/
+# visual studio code config files
 diaui.code-workspace
 .vscode/

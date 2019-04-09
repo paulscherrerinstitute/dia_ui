@@ -11,6 +11,7 @@
 import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
 import { setPassiveTouchGestures, setRootPath } from '@polymer/polymer/lib/utils/settings.js';
 import { connect } from 'pwa-helpers/connect-mixin.js';
+import { store } from '../store.js';
 import '@polymer/app-layout/app-drawer/app-drawer.js';
 import '@polymer/app-layout/app-drawer-layout/app-drawer-layout.js';
 import '@polymer/app-layout/app-header/app-header.js';
@@ -23,8 +24,7 @@ import '@polymer/iron-pages/iron-pages.js';
 import '@polymer/iron-selector/iron-selector.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import './my-icons.js';
-import { store } from '../store.js';
-import '../socketio/socketio.js'
+import '../socketio/socketio.js';
 
 // Gesture events like tap and track generated from touch will not be
 // preventable, allowing for better scrolling performance.
@@ -167,11 +167,12 @@ class MyApp extends connect(store)(PolymerElement) {
     super.ready();
     //connect to the socket server.
     var socket = io.connect('http://' + document.domain + ':' + location.port + '/test');
-    
+
     socket.on('newmessage', function(msg) {
+      console.log('new message received ', msg.beam_energy);
       document.querySelector('my-app').newMessage(msg.beam_energy);
-      var beamEnergyAlt = msg.beam_energy * 10
-      socket.emit('my_response', {'beamEnergyAlt': beamEnergyAlt})
+      var beamEnergyAlt = msg.beam_energy * 10;
+      socket.emit('my_response', {'beamEnergyAlt': beamEnergyAlt}, namespace='/test')
     });
   }
 
@@ -181,6 +182,7 @@ class MyApp extends connect(store)(PolymerElement) {
   }
 
   newMessage(msg){
+    console.log('updating beam...');
     store.dispatch({type:'UPDATE_BEAM', payload:msg});
   }
 

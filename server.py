@@ -16,11 +16,10 @@ CORS(app)
 #turn the flask app into a socketio app
 socketio = SocketIO(app)
 
-
-
 @app.route('/favicon.ico')
 def favicon():
-    return send_from_directory('static/','images/favicon.ico')
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 # @app.route('/service-worker.js', methods=['GET'])
 # def service():
