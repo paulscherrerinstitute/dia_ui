@@ -74,3 +74,6 @@ dependencies:
   - zlib=1.2.11=h1de35cc_1004
 prefix: /anaconda3/envs/dia_ui
 
+about:
+  home: https://github.com/paulscherrerinstitute/dia_ui
+  summary: "A User interface for the detection integration api."
