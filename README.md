@@ -4,7 +4,9 @@ This is the first version of the Detector Integration API User Interface. It's b
 
 ### Prerequisites
 
-You will need [git](www.git.org), [anaconda](https://www.anaconda.com/distribution/), [conda](https://docs.conda.io/en/latest/), [NodeJS](https://nodejs.org/en/), [npm](https://www.npmjs.com/)
+You will need [git](www.git.org), [anaconda](https://www.anaconda.com/distribution/), [conda](https://docs.conda.io/en/latest/), [NodeJS](https://nodejs.org/en/), [npm](https://www.npmjs.com/).
+
+
 
 ### Installing
 
@@ -17,12 +19,12 @@ git clone https://github.com/paulscherrerinstitute/dia_ui.git && cd dia_ui
 Then, run the installation script to create a new environment with all the depencies necessaries to run DIA UI (it will also activate the newly created environment after the installation):
 
 ```bash
-install_dep.sh
+install.sh
 ```
 > The new environment is called dia_ui, to deactivate it type `conda deactivate`.
 
 -------------------------
-## Running the tests
+### Running the tests
 - To be implemented...
 
 -------------------------
