@@ -26,6 +26,9 @@ def favicon():
 #     return app.send_static_file('./service-worker.js')
 
 @app.route('/', methods=['GET'])
+@app.route('/view1', methods=['GET'])
+@app.route('/view2', methods=['GET'])
+@app.route('/view3', methods=['GET'])
 def root():
     return app.send_static_file('index.html')
 
