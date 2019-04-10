@@ -163,18 +163,18 @@ class MyApp extends connect(store)(PolymerElement) {
     connectToRedux(this);    
   }
 
-  // ready(){
-  //   super.ready();
-  //         //connect to the socket server.
-  //   var socket = io.connect('http://' + document.domain + ':' + location.port + '/test');
+  ready(){
+    super.ready();
+          //connect to the socket server.
+    var socket = io.connect('http://' + document.domain + ':' + location.port);
     
-  //   socket.on('newmessage', function(msg) {
-  //     console.log('new message received ', msg.beam_energy);
-  //     document.querySelector('my-app').newMessage(msg.beam_energy);
-  //     var beamEnergyAlt = msg.beam_energy * 10;
-  //     socket.emit('my_response', {'beamEnergyAlt': beamEnergyAlt}, namespace='/test')
-  //   });
-  // }
+    socket.on('newmessage', function(msg) {
+      console.log('new message received ', msg.beam_energy);
+      document.querySelector('my-app').newMessage(msg.beam_energy);
+      var beamEnergyAlt = msg.beam_energy * 10;
+      socket.emit('my_response', {'beamEnergyAlt': beamEnergyAlt})
+    });
+  }
 
   stateReceiver(state){
     this.todos = state.app.todos;

@@ -1,4 +1,4 @@
-import optparse
+import optparse, os
 
 from bsread import source
 from flask_socketio import SocketIO, emit
@@ -35,7 +35,7 @@ def page_not_found(error):
 
 
 # Detects a new client connected and start the thread.
-@socketio.on('connect', namespace='/test')
+@socketio.on('connect')
 def test_connect():
     # need visibility of the global thread object
     global thread
@@ -49,12 +49,12 @@ def test_connect():
         thread.start()
 
 # Detecs when a client disconnects
-@socketio.on('disconnect', namespace='/test')
+@socketio.on('disconnect')
 def test_disconnect():
     print('Client disconnected...')
 
 
-@socketio.on('my_response', namespace='/test')
+@socketio.on('my_response')
 def handle_my_custom_event(json, methods=['GET', 'POST']):
     print(json)
 
@@ -104,7 +104,7 @@ class ClientThread(Thread):
                                 }
                         # emits the signal with the data
                         if n_received % 25 == 0:
-                            socketio.emit('newmessage', data, namespace='/test')
+                            socketio.emit('newmessage', data)
                             print("Emit: ", float(message.data.data['beam_energy'].value))
             else:
                 for _ in range(self._n_images):
