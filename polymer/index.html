@@ -119,7 +119,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <!-- Built with love using Polymer Starter Kit -->
     <!-- Loads webcomoponents-loader.js to check and load any polyfills for the browser -->
     <script src="static/node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
-    <!-- <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>       -->
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>      
     
     
     <script>
@@ -129,7 +129,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       };
 
-
+      //connect to the socket server.
+    var socket = io.connect('http://' + document.domain + ':' + location.port + '/test');
+    
+    socket.on('newmessage', function(msg) {
+      console.log('new message received ', msg.beam_energy);
+      document.querySelector('my-app').newMessage(msg.beam_energy);
+      var beamEnergyAlt = msg.beam_energy * 10;
+      socket.emit('my_response', {'beamEnergyAlt': beamEnergyAlt}, namespace='/test')
+    });
     
     </script>
     

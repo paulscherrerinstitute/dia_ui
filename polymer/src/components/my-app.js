@@ -24,7 +24,7 @@ import '@polymer/iron-pages/iron-pages.js';
 import '@polymer/iron-selector/iron-selector.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import './my-icons.js';
-import '../socketio/socketio.js';
+// import '../socketio/socketio.js';
 
 // Gesture events like tap and track generated from touch will not be
 // preventable, allowing for better scrolling performance.
@@ -163,18 +163,18 @@ class MyApp extends connect(store)(PolymerElement) {
     connectToRedux(this);    
   }
 
-  ready(){
-    super.ready();
-    //connect to the socket server.
-    var socket = io.connect('http://' + document.domain + ':' + location.port + '/test');
-
-    socket.on('newmessage', function(msg) {
-      console.log('new message received ', msg.beam_energy);
-      document.querySelector('my-app').newMessage(msg.beam_energy);
-      var beamEnergyAlt = msg.beam_energy * 10;
-      socket.emit('my_response', {'beamEnergyAlt': beamEnergyAlt}, namespace='/test')
-    });
-  }
+  // ready(){
+  //   super.ready();
+  //         //connect to the socket server.
+  //   var socket = io.connect('http://' + document.domain + ':' + location.port + '/test');
+    
+  //   socket.on('newmessage', function(msg) {
+  //     console.log('new message received ', msg.beam_energy);
+  //     document.querySelector('my-app').newMessage(msg.beam_energy);
+  //     var beamEnergyAlt = msg.beam_energy * 10;
+  //     socket.emit('my_response', {'beamEnergyAlt': beamEnergyAlt}, namespace='/test')
+  //   });
+  // }
 
   stateReceiver(state){
     this.todos = state.app.todos;
