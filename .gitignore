@@ -4,3 +4,5 @@ node_modules/
 # visual studio code config files
 diaui.code-workspace
 .vscode/
+# python compiled files
+*.pyc
