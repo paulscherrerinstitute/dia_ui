@@ -118,6 +118,9 @@ class MyView3 extends connect(store)(PolymerElement) {
       // view3.$.submitConfigButton.removeAttribute("disabled");
       // disable edit fields
       view3.shadowRoot.querySelector('#config_accordion > vaadin-vertical-layout > dia-config').disableEditField();
+      notification.renderer = function(root) {
+        root.textContent = 'Loading configuration from server '+ view3.$.det_api_field.value +'.';
+      };
     });
 
     // edit button
@@ -136,16 +139,22 @@ class MyView3 extends connect(store)(PolymerElement) {
         // enables submit button
         view3.$.submitConfigButton.removeAttribute("disabled");
       }
+      notification.renderer = function(root) {
+        root.textContent = 'Editing configuration from server '+ view3.$.det_api_field.value +'.';
+      };
     });
 
     // start button
-    this.$.stopConfigButton.addEventListener('click', function() {
+    this.$.startConfigButton.addEventListener('click', function() {
       notification.open();
       if (view3.loaded_config === true){
         socket.emit('emitStart', {'det_api_address': view3.det_api_address});
       }
       // disable edit fields
       view3.shadowRoot.querySelector('#config_accordion > vaadin-vertical-layout > dia-config').disableEditField();
+      notification.renderer = function(root) {
+        root.textContent = 'Starting server '+ view3.$.det_api_field.value +'.';
+      };
     });
 
     // stop button
@@ -156,6 +165,9 @@ class MyView3 extends connect(store)(PolymerElement) {
       }
       // disable edit fields
       view3.shadowRoot.querySelector('#config_accordion > vaadin-vertical-layout > dia-config').disableEditField();
+      notification.renderer = function(root) {
+        root.textContent = 'Stopping server '+ view3.$.det_api_field.value +'.';
+      };
     });
 
     // submit button clicked
@@ -179,11 +191,12 @@ class MyView3 extends connect(store)(PolymerElement) {
       view3.$.submitConfigButton.setAttribute("disabled", "disabled");
       // adjusts the text fields
       view3.shadowRoot.querySelector('#config_accordion > vaadin-vertical-layout > dia-config').disableEditField();
+      notification.renderer = function(root) {
+        root.textContent = 'Submitting configuration to server '+ view3.$.det_api_field.value +'.';
+      }; 
     });
 
-    notification.renderer = function(root) {
-      root.textContent = 'Loading configuration from server '+ view3.$.det_api_field.value +'.';
-    };
+       
     
   }
 
