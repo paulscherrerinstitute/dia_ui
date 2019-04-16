@@ -27,12 +27,6 @@ class MyView2 extends connect(store)(PolymerElement) {
           padding: 10px;
         }
       </style>
-
-      <div class="card">
-        <div class="circle">2</div>
-        <h1>View Two</h1>
-        <p>Beam energy: [[beamEnergy]]</p>
-      </div>
       
       <div class="card">
           <div id="containerHighchart" style="min-width: 310px;height: 400px;margin: 0 auto;">

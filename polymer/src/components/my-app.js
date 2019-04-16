@@ -24,7 +24,6 @@ import '@polymer/iron-pages/iron-pages.js';
 import '@polymer/iron-selector/iron-selector.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import './my-icons.js';
-// import '../socketio/socketio.js';
 
 // Gesture events like tap and track generated from touch will not be
 // preventable, allowing for better scrolling performance.
@@ -87,9 +86,11 @@ class MyApp extends connect(store)(PolymerElement) {
         <app-drawer id="drawer" slot="drawer" swipe-open="[[narrow]]">
           <app-toolbar>Menu</app-toolbar>
           <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-            <a name="view1" href="[[rootPath]]view1">View One</a>
-            <a name="view2" href="[[rootPath]]view2">View Two</a>
-            <a name="view3" href="[[rootPath]]view3">View Three</a>
+            <!--a name="view1" href="[[rootPath]]view1">View One</a-->
+            
+            <a name="view3" href="[[rootPath]]view3">DIA configuration</a>
+            <a name="view2" href="[[rootPath]]view2">Detector scan</a>
+            <a name="logView" href="[[rootPath]]logView">Log viewer</a>
           </iron-selector>
           <div id="containerHigh"></div>
         </app-drawer>
@@ -100,14 +101,15 @@ class MyApp extends connect(store)(PolymerElement) {
           <app-header slot="header" condenses="" reveals="" effects="waterfall">
             <app-toolbar>
               <paper-icon-button icon="my-icons:menu" drawer-toggle=""></paper-icon-button>
-              <div main-title="">My App</div>
+              <div main-title="">DIA UI</div>
             </app-toolbar>
           </app-header>
 
           <iron-pages selected="[[page]]" attr-for-selected="name" role="main">
-            <my-view1 name="view1"></my-view1>
+            <!--my-view1 name="view1"></my-view1-->
             <my-view2 name="view2"></my-view2>
             <my-view3 name="view3"></my-view3>
+            <log-view name="logView"></log-view>
             <my-view404 name="view404"></my-view404>
           </iron-pages>
         </app-header-layout>
@@ -126,8 +128,7 @@ class MyApp extends connect(store)(PolymerElement) {
       subroute: Object,
       todos: {type: Array, value:store.getState().app.todos},
       beamEnergy: {type: Number, value:  store.getState().app.beamEnergy},
-      jsonState: {type: JSON, value:  store.getState().app.myJson},
-      viewLoaded: {type: Array, value:[false,false,false]}
+      jsonState: {type: JSON, value:  store.getState().app.myJson}
     };
   }
 
@@ -145,8 +146,8 @@ class MyApp extends connect(store)(PolymerElement) {
      // If no page was found in the route data, page will be an empty string.
      // Show 'view1' in that case. And if the page doesn't exist, show 'view404'.
     if (!page) {
-      this.page = 'view1';
-    } else if (['view1', 'view2', 'view3'].indexOf(page) !== -1) {
+      this.page = 'view3';
+    } else if (['view1', 'view2', 'view3', 'logView'].indexOf(page) !== -1) {
       this.page = page;
     } else {
       this.page = 'view404';
@@ -168,12 +169,27 @@ class MyApp extends connect(store)(PolymerElement) {
           //connect to the socket server.
     var socket = io.connect('http://' + document.domain + ':' + location.port);
     
-    socket.on('newmessage', function(msg) {
-      console.log('new message received ', msg.beam_energy);
+    socket.on('newBSREAD', function(msg) {
       document.querySelector('my-app').newMessage(msg.beam_energy);
-      var beamEnergyAlt = msg.beam_energy * 10;
-      socket.emit('my_response', {'beamEnergyAlt': beamEnergyAlt})
     });
+
+    socket.on('newConfigWriterData', function(msg) {
+      store.dispatch({type:'UPDATE_WRITER_CONFIG', payload:msg});
+    });
+
+    socket.on('newConfigStatus', function(msg) {
+      store.dispatch({type:'UPDATE_STATUS_CONFIG', payload:msg});
+    });
+
+    socket.on('newConfigDetectorData', function(msg) {
+      store.dispatch({type:'UPDATE_DETECTOR_CONFIG', payload:msg});
+    });
+
+    socket.on('newConfigBackendData', function(msg) {
+      store.dispatch({type:'UPDATE_BACKEND_CONFIG', payload:msg});
+    });
+
+
   }
 
   stateReceiver(state){
@@ -202,15 +218,15 @@ class MyApp extends connect(store)(PolymerElement) {
     switch (page) {
       case 'view1':
         import('./my-view1.js');
-        this.viewLoaded[0] = true;
         break;
       case 'view2':
         import('./my-view2.js');
-        this.viewLoaded[1] = true;
         break;
       case 'view3':
         import('./my-view3.js');
-        this.viewLoaded[2] = true;
+        break;
+      case 'logView':
+        import('./log-view.js');
         break;
       case 'view404':
         import('./my-view404.js');

@@ -1,11 +1,16 @@
 import optparse, os
 
 from bsread import source
+from detector_integration_api import DetectorIntegrationClient
+
+
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 from flask import Flask, send_from_directory
 
 from threading import Thread, Event
+
+# from detector_integration_api import DetectorIntegrationClient
 
 
 __author__ = 'hax_damiani'
@@ -61,6 +66,79 @@ def test_disconnect():
 def handle_my_custom_event(json, methods=['GET', 'POST']):
     print(json)
 
+@socketio.on('newConfigurationFromClient')
+def new_config_from_client(json, methods=['GET', 'POST']):
+    api_det_address = json['det_api_address']
+    # created the detector integration client object with the address of interest
+    client = DetectorIntegrationClient(api_det_address)
+    # sets new configuration
+    print(json['configuration'])
+    client.set_config(json['configuration'])
+    # updates the showing configuration on the client side.
+    jsonConfig = client.get_config()
+    # emits updated writer configuration
+    socketio.emit('newConfigStatus', {'state':jsonConfig['state'], 'status':jsonConfig['status']})
+    # emits updated writer configuration
+    socketio.emit('newConfigWriterData', jsonConfig['config']['writer'])
+    # emits updated detector configuration
+    socketio.emit('newConfigDetectorData', jsonConfig['config']['detector'])
+    # emits updated backend configuration
+    socketio.emit('newConfigBackendData', jsonConfig['config']['backend'])
+
+@socketio.on('emitStop')
+def stop_from_client(json, methods=['GET', 'POST']):
+    api_det_address = json['det_api_address']
+    # created the detector integration client object with the address of interest
+    client = DetectorIntegrationClient(api_det_address)
+    # stopping the client
+    client.stop()
+    # updates the showing configuration on the client side.
+    jsonConfig = client.get_config()
+    # emits updated writer configuration
+    socketio.emit('newConfigStatus', {'state':jsonConfig['state'], 'status':jsonConfig['status']})
+    # emits updated writer configuration
+    socketio.emit('newConfigWriterData', jsonConfig['config']['writer'])
+    # emits updated detector configuration
+    socketio.emit('newConfigDetectorData', jsonConfig['config']['detector'])
+    # emits updated backend configuration
+    socketio.emit('newConfigBackendData', jsonConfig['config']['backend'])
+
+@socketio.on('emitStart')
+def start_from_client(json, methods=['GET', 'POST']):
+    api_det_address = json['det_api_address']
+    # created the detector integration client object with the address of interest
+    client = DetectorIntegrationClient(api_det_address)
+    # stopping the client
+    client.start()
+    # updates the showing configuration on the client side.
+    jsonConfig = client.get_config()
+    # emits updated writer configuration
+    socketio.emit('newConfigStatus', {'state':jsonConfig['state'], 'status':jsonConfig['status']})
+    # emits updated writer configuration
+    socketio.emit('newConfigWriterData', jsonConfig['config']['writer'])
+    # emits updated detector configuration
+    socketio.emit('newConfigDetectorData', jsonConfig['config']['detector'])
+    # emits updated backend configuration
+    socketio.emit('newConfigBackendData', jsonConfig['config']['backend'])
+
+
+@socketio.on('get_detectorConfig')
+def get_detectorConfig(json, methods=['GET', 'POST']):
+    # gets address value from the detector api of interest
+    api_det_address = json['det_api_address']
+    # created the detector integration client object with the address of interest
+    client = DetectorIntegrationClient(api_det_address)
+    # get configuration from server
+    jsonConfig = client.get_config()
+    # emits updated writer configuration
+    socketio.emit('newConfigStatus', {'state':jsonConfig['state'], 'status':jsonConfig['status']})
+    # emits updated writer configuration
+    socketio.emit('newConfigWriterData', jsonConfig['config']['writer'])
+    # emits updated detector configuration
+    socketio.emit('newConfigDetectorData', jsonConfig['config']['detector'])
+    # emits updated backend configuration
+    socketio.emit('newConfigBackendData', jsonConfig['config']['backend'])
+
 # Server thread
 thread = Thread()
 thread_stop_event = Event()
@@ -107,7 +185,7 @@ class ClientThread(Thread):
                                 }
                         # emits the signal with the data
                         if n_received % 25 == 0:
-                            socketio.emit('newmessage', data)
+                            socketio.emit('newBSREAD', data)
                             print("Emit: ", float(message.data.data['beam_energy'].value))
             else:
                 for _ in range(self._n_images):
@@ -132,7 +210,7 @@ class ClientThread(Thread):
                                 'image_size_x': float(message.data.data['image_size_x'].value)
                                 }
                         # emits the signal with the data
-                        socketio.emit('newmessage', data, namespace='/test')
+                        socketio.emit('newBSREAD', data, namespace='/test')
 
     def run(self):
         self.receive_stream()
