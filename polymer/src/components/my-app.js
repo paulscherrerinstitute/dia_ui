@@ -203,7 +203,6 @@ class MyApp extends connect(store)(PolymerElement) {
   }
 
   newMessage(msg){
-    console.log('updating beam...');
     store.dispatch({type:'UPDATE_BEAM', payload:msg});
   }
 
