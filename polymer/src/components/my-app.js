@@ -189,6 +189,11 @@ class MyApp extends connect(store)(PolymerElement) {
       store.dispatch({type:'UPDATE_BACKEND_CONFIG', payload:msg});
     });
 
+    socket.on('problemLoadingConfig', function(msg){
+      console.log('problemLoadingConfig');
+      store.dispatch({type:'ERROR_LOADING_CONFIG', payload:msg});
+    })
+
 
   }
 

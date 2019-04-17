@@ -121,14 +121,14 @@ def start_from_client(json, methods=['GET', 'POST']):
     # emits updated backend configuration
     socketio.emit('newConfigBackendData', jsonConfig['config']['backend'])
 
-
-@socketio.on('get_detectorConfig')
-def get_detectorConfig(json, methods=['GET', 'POST']):
-    # gets address value from the detector api of interest
+@socketio.on('emitReset')
+def start_from_client(json, methods=['GET', 'POST']):
     api_det_address = json['det_api_address']
     # created the detector integration client object with the address of interest
     client = DetectorIntegrationClient(api_det_address)
-    # get configuration from server
+    # stopping the client
+    client.reset()
+    # updates the showing configuration on the client side.
     jsonConfig = client.get_config()
     # emits updated writer configuration
     socketio.emit('newConfigStatus', {'state':jsonConfig['state'], 'status':jsonConfig['status']})
@@ -138,6 +138,28 @@ def get_detectorConfig(json, methods=['GET', 'POST']):
     socketio.emit('newConfigDetectorData', jsonConfig['config']['detector'])
     # emits updated backend configuration
     socketio.emit('newConfigBackendData', jsonConfig['config']['backend'])
+
+
+
+
+@socketio.on('emitLoad')
+def get_detectorConfig(json, methods=['GET', 'POST']):
+    # gets address value from the detector api of interest
+    api_det_address = json['det_api_address']
+    # created the detector integration client object with the address of interest
+    client = DetectorIntegrationClient(api_det_address)
+    # get configuration from server  
+    jsonConfig = client.get_config()
+    print('received config', jsonConfig)
+    # emits updated writer configuration
+    socketio.emit('newConfigStatus', {'state':jsonConfig['state'], 'status':jsonConfig['status']})
+    # emits updated writer configuration
+    socketio.emit('newConfigWriterData', jsonConfig['config']['writer'])
+    # emits updated detector configuration
+    socketio.emit('newConfigDetectorData', jsonConfig['config']['detector'])
+    # emits updated backend configuration
+    socketio.emit('newConfigBackendData', jsonConfig['config']['backend'])
+    
 
 # Server thread
 thread = Thread()

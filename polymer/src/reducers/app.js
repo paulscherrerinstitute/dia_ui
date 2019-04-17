@@ -1,6 +1,7 @@
 const initialState = {
     todos: ["teste", "demo", "CARAI"],
     beamEnergy: 5.0,
+    problemLoadingConfig: "",
     myJson: {
         "name":"John",
         "age":30,
@@ -41,6 +42,9 @@ const app = (state, action) => {
         }
         case 'UPDATE_BACKEND_CONFIG':{
             return {...state, backend_config: action.payload}
+        }
+        case 'ERROR_LOADING_CONFIG':{
+            return {...state, problemLoadingConfig: action.payload}
         }
         default:
             return initialState

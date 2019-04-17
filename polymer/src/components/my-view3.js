@@ -44,7 +44,7 @@ class MyView3 extends connect(store)(PolymerElement) {
         <vaadin-button id="submitConfigButton" disabled>Submit</vaadin-button>
         <vaadin-button id="startConfigButton" disabled>Start</vaadin-button>
         <vaadin-button id="stopConfigButton" disabled>Stop</vaadin-button>
-        <vaadin-button id="killConfigButton" disabled>Kill</vaadin-button>
+        <vaadin-button id="resetConfigButton" disabled>Reset</vaadin-button>
         <vaadin-notification id="notify" duration="1500" position="top-end"></vaadin-notification>
         </div>
       </vaadin-form-layout>
@@ -94,7 +94,7 @@ class MyView3 extends connect(store)(PolymerElement) {
       view3.$.startConfigButton.setAttribute("disabled", "disabled");
       view3.$.editConfigButton.setAttribute("disabled", "disabled");
       view3.$.stopConfigButton.setAttribute("disabled", "disabled");
-      view3.$.killConfigButton.setAttribute("disabled", "disabled");
+      view3.$.resetConfigButton.setAttribute("disabled", "disabled");
       view3.$.config_accordion.setAttribute("disabled", "disabled");
     });
 
@@ -105,7 +105,7 @@ class MyView3 extends connect(store)(PolymerElement) {
       view3.loaded_config = true;
       view3.det_api_address = view3.$.det_api_field.value;
       
-      socket.emit('get_detectorConfig', {'det_api_address': view3.det_api_address});
+      socket.emit('emitLoad', {'det_api_address': view3.det_api_address});
       // presents the configuration
       view3.$.config_accordion.removeAttribute("disabled");
       // disable the load button
@@ -114,7 +114,7 @@ class MyView3 extends connect(store)(PolymerElement) {
       view3.$.startConfigButton.removeAttribute("disabled");
       view3.$.editConfigButton.removeAttribute("disabled");
       view3.$.stopConfigButton.removeAttribute("disabled");
-      view3.$.killConfigButton.removeAttribute("disabled");
+      view3.$.resetConfigButton.removeAttribute("disabled");
       // view3.$.submitConfigButton.removeAttribute("disabled");
       // disable edit fields
       view3.shadowRoot.querySelector('#config_accordion > vaadin-vertical-layout > dia-config').disableEditField();
@@ -122,6 +122,8 @@ class MyView3 extends connect(store)(PolymerElement) {
         root.textContent = 'Loading configuration from server '+ view3.$.det_api_field.value +'.';
       };
     });
+
+
 
     // edit button
     this.$.editConfigButton.addEventListener('click', function() {
@@ -135,7 +137,7 @@ class MyView3 extends connect(store)(PolymerElement) {
         view3.$.startConfigButton.setAttribute("disabled", "disabled");
         view3.$.editConfigButton.setAttribute("disabled", "disabled");
         view3.$.stopConfigButton.setAttribute("disabled", "disabled");
-        view3.$.killConfigButton.setAttribute("disabled", "disabled");
+        view3.$.resetConfigButton.setAttribute("disabled", "disabled");
         // enables submit button
         view3.$.submitConfigButton.removeAttribute("disabled");
       }
@@ -152,8 +154,24 @@ class MyView3 extends connect(store)(PolymerElement) {
       }
       // disable edit fields
       view3.shadowRoot.querySelector('#config_accordion > vaadin-vertical-layout > dia-config').disableEditField();
+      // disable start button
+      view3.$.startConfigButton.setAttribute("disabled", "disabled");
+      // enables stop button
+      view3.$.stopConfigButton.removeAttribute("disabled");
       notification.renderer = function(root) {
         root.textContent = 'Starting server '+ view3.$.det_api_field.value +'.';
+      };
+    });
+    // reset button
+    this.$.resetConfigButton.addEventListener('click', function() {
+      notification.open();
+      if (view3.loaded_config === true){
+        socket.emit('emitReset', {'det_api_address': view3.det_api_address});
+      }
+      // disable edit fields
+      view3.shadowRoot.querySelector('#config_accordion > vaadin-vertical-layout > dia-config').disableEditField();
+      notification.renderer = function(root) {
+        root.textContent = 'Resetting server '+ view3.$.det_api_field.value +'.';
       };
     });
 
@@ -165,6 +183,8 @@ class MyView3 extends connect(store)(PolymerElement) {
       }
       // disable edit fields
       view3.shadowRoot.querySelector('#config_accordion > vaadin-vertical-layout > dia-config').disableEditField();
+      // disable stop button
+      view3.$.stopConfigButton.setAttribute("disabled", "disabled");
       notification.renderer = function(root) {
         root.textContent = 'Stopping server '+ view3.$.det_api_field.value +'.';
       };
@@ -185,7 +205,7 @@ class MyView3 extends connect(store)(PolymerElement) {
       socket.emit('newConfigurationFromClient', submitJson);
       // adjusts the buttons
       view3.$.startConfigButton.removeAttribute("disabled");
-      view3.$.killConfigButton.removeAttribute("disabled");
+      view3.$.resetConfigButton.removeAttribute("disabled");
       view3.$.editConfigButton.removeAttribute("disabled");
       view3.$.stopConfigButton.removeAttribute("disabled");
       view3.$.submitConfigButton.setAttribute("disabled", "disabled");
@@ -195,9 +215,6 @@ class MyView3 extends connect(store)(PolymerElement) {
         root.textContent = 'Submitting configuration to server '+ view3.$.det_api_field.value +'.';
       }; 
     });
-
-       
-    
   }
 
   stateChanged(state){
@@ -205,6 +222,7 @@ class MyView3 extends connect(store)(PolymerElement) {
     this.writer_config = state.app.writer_config;
     this.detector_config = state.app.detector_config;
     this.backend_config = state.app.backend_config;
+    this.problemLoadingConfig = state.app.problemLoadingConfig;
   }
 
 }
