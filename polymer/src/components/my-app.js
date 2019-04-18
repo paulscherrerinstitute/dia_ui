@@ -179,6 +179,7 @@ class MyApp extends connect(store)(PolymerElement) {
 
     socket.on('newConfigStatus', function(msg) {
       store.dispatch({type:'UPDATE_STATUS_CONFIG', payload:msg});
+
     });
 
     socket.on('newConfigDetectorData', function(msg) {
@@ -190,10 +191,16 @@ class MyApp extends connect(store)(PolymerElement) {
     });
 
     socket.on('problemLoadingConfig', function(msg){
-      console.log('problemLoadingConfig');
       store.dispatch({type:'ERROR_LOADING_CONFIG', payload:msg});
     })
 
+    socket.on('finishedRequestSuccessfully', function(msg){
+      if (msg['status']==='ok'){
+        document.querySelector('my-app').hideProgressBar();
+      }
+    })
+
+    
 
   }
 
@@ -205,6 +212,13 @@ class MyApp extends connect(store)(PolymerElement) {
   newMessage(msg){
     store.dispatch({type:'UPDATE_BEAM', payload:msg});
   }
+
+  hideProgressBar(){
+    // gets view3 from shadowRoot
+    const view3 = document.querySelector('body > my-app').shadowRoot.querySelector('app-drawer-layout > app-header-layout > iron-pages > my-view3')
+    view3.hideProgressBar()
+  }
+  
 
   removeTodoItem(e){
     store.dispatch({type:'REMOVE', payload:e.model.index});

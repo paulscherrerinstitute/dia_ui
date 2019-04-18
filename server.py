@@ -61,29 +61,29 @@ def test_connect():
 def test_disconnect():
     print('Client disconnected...')
 
-
-@socketio.on('my_response')
-def handle_my_custom_event(json, methods=['GET', 'POST']):
-    print(json)
-
 @socketio.on('newConfigurationFromClient')
 def new_config_from_client(json, methods=['GET', 'POST']):
     api_det_address = json['det_api_address']
     # created the detector integration client object with the address of interest
     client = DetectorIntegrationClient(api_det_address)
     # sets new configuration
-    print(json['configuration'])
-    client.set_config(json['configuration'])
-    # updates the showing configuration on the client side.
-    jsonConfig = client.get_config()
-    # emits updated writer configuration
-    socketio.emit('newConfigStatus', {'state':jsonConfig['state'], 'status':jsonConfig['status']})
-    # emits updated writer configuration
-    socketio.emit('newConfigWriterData', jsonConfig['config']['writer'])
-    # emits updated detector configuration
-    socketio.emit('newConfigDetectorData', jsonConfig['config']['detector'])
-    # emits updated backend configuration
-    socketio.emit('newConfigBackendData', jsonConfig['config']['backend'])
+    try:
+        client.set_config(json['configuration'])
+    except Exception as e:
+        print('Problem setting new config to the server', e)
+    else:
+        # updates the showing configuration on the client side.
+        jsonConfig = client.get_config()
+        # emits updated writer configuration
+        socketio.emit('newConfigStatus', {'state':jsonConfig['state'], 'status':jsonConfig['status']})
+        # emits updated writer configuration
+        socketio.emit('newConfigWriterData', jsonConfig['config']['writer'])
+        # emits updated detector configuration
+        socketio.emit('newConfigDetectorData', jsonConfig['config']['detector'])
+        # emits updated backend configuration
+        socketio.emit('newConfigBackendData', jsonConfig['config']['backend'])
+        # emits finished request
+        socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
 
 @socketio.on('emitStop')
 def stop_from_client(json, methods=['GET', 'POST']):
@@ -91,53 +91,72 @@ def stop_from_client(json, methods=['GET', 'POST']):
     # created the detector integration client object with the address of interest
     client = DetectorIntegrationClient(api_det_address)
     # stopping the client
-    client.stop()
-    # updates the showing configuration on the client side.
-    jsonConfig = client.get_config()
-    # emits updated writer configuration
-    socketio.emit('newConfigStatus', {'state':jsonConfig['state'], 'status':jsonConfig['status']})
-    # emits updated writer configuration
-    socketio.emit('newConfigWriterData', jsonConfig['config']['writer'])
-    # emits updated detector configuration
-    socketio.emit('newConfigDetectorData', jsonConfig['config']['detector'])
-    # emits updated backend configuration
-    socketio.emit('newConfigBackendData', jsonConfig['config']['backend'])
+    try:
+        client.stop()
+    except Exception as e:
+        print('Problem stopping server', e)
+    else:
+        # updates the showing configuration on the client side.
+        jsonConfig = client.get_config()
+        # emits updated writer configuration
+        socketio.emit('newConfigStatus', {'state':jsonConfig['state'], 'status':jsonConfig['status']})
+        # emits updated writer configuration
+        socketio.emit('newConfigWriterData', jsonConfig['config']['writer'])
+        # emits updated detector configuration
+        socketio.emit('newConfigDetectorData', jsonConfig['config']['detector'])
+        # emits updated backend configuration
+        socketio.emit('newConfigBackendData', jsonConfig['config']['backend'])
+        # emits finished request
+        socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
 
 @socketio.on('emitStart')
 def start_from_client(json, methods=['GET', 'POST']):
     api_det_address = json['det_api_address']
     # created the detector integration client object with the address of interest
     client = DetectorIntegrationClient(api_det_address)
-    # stopping the client
-    client.start()
-    # updates the showing configuration on the client side.
-    jsonConfig = client.get_config()
-    # emits updated writer configuration
-    socketio.emit('newConfigStatus', {'state':jsonConfig['state'], 'status':jsonConfig['status']})
-    # emits updated writer configuration
-    socketio.emit('newConfigWriterData', jsonConfig['config']['writer'])
-    # emits updated detector configuration
-    socketio.emit('newConfigDetectorData', jsonConfig['config']['detector'])
-    # emits updated backend configuration
-    socketio.emit('newConfigBackendData', jsonConfig['config']['backend'])
+    # starting the client
+    try:
+        client.start()
+    except Exception as e:
+        print('Problem starting server', e)
+    else:
+        # updates the showing configuration on the client side.
+        jsonConfig = client.get_config()
+        # emits updated writer configuration
+        socketio.emit('newConfigStatus', {'state':jsonConfig['state'], 'status':jsonConfig['status']})
+        # emits updated writer configuration
+        socketio.emit('newConfigWriterData', jsonConfig['config']['writer'])
+        # emits updated detector configuration
+        socketio.emit('newConfigDetectorData', jsonConfig['config']['detector'])
+        # emits updated backend configuration
+        socketio.emit('newConfigBackendData', jsonConfig['config']['backend'])
+        # emits finished request
+        socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
 
 @socketio.on('emitReset')
 def start_from_client(json, methods=['GET', 'POST']):
     api_det_address = json['det_api_address']
     # created the detector integration client object with the address of interest
     client = DetectorIntegrationClient(api_det_address)
-    # stopping the client
-    client.reset()
-    # updates the showing configuration on the client side.
-    jsonConfig = client.get_config()
-    # emits updated writer configuration
-    socketio.emit('newConfigStatus', {'state':jsonConfig['state'], 'status':jsonConfig['status']})
-    # emits updated writer configuration
-    socketio.emit('newConfigWriterData', jsonConfig['config']['writer'])
-    # emits updated detector configuration
-    socketio.emit('newConfigDetectorData', jsonConfig['config']['detector'])
-    # emits updated backend configuration
-    socketio.emit('newConfigBackendData', jsonConfig['config']['backend'])
+    # reseting the client
+    try:
+        client.reset()
+    except Exception as e:
+        print('Problem resetting the server', e)
+    else:
+        # updates the showing configuration on the client side.
+        jsonConfig = client.get_config()
+        # emits updated writer configuration
+        socketio.emit('newConfigStatus', {'state':jsonConfig['state'], 'status':jsonConfig['status']})
+        # emits updated writer configuration
+        socketio.emit('newConfigWriterData', jsonConfig['config']['writer'])
+        # emits updated detector configuration
+        socketio.emit('newConfigDetectorData', jsonConfig['config']['detector'])
+        # emits updated backend configuration
+        socketio.emit('newConfigBackendData', jsonConfig['config']['backend'])
+        # emits finished request
+        socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
+    
 
 
 
@@ -149,16 +168,21 @@ def get_detectorConfig(json, methods=['GET', 'POST']):
     # created the detector integration client object with the address of interest
     client = DetectorIntegrationClient(api_det_address)
     # get configuration from server  
-    jsonConfig = client.get_config()
-    print('received config', jsonConfig)
-    # emits updated writer configuration
-    socketio.emit('newConfigStatus', {'state':jsonConfig['state'], 'status':jsonConfig['status']})
-    # emits updated writer configuration
-    socketio.emit('newConfigWriterData', jsonConfig['config']['writer'])
-    # emits updated detector configuration
-    socketio.emit('newConfigDetectorData', jsonConfig['config']['detector'])
-    # emits updated backend configuration
-    socketio.emit('newConfigBackendData', jsonConfig['config']['backend'])
+    try:
+        jsonConfig = client.get_config()
+    except Exception as e:
+        print('Problem resetting the server', e)
+    else:
+        # emits updated writer configuration
+        socketio.emit('newConfigStatus', {'state':jsonConfig['state'], 'status':jsonConfig['status']})
+        # emits updated writer configuration
+        socketio.emit('newConfigWriterData', jsonConfig['config']['writer'])
+        # emits updated detector configuration
+        socketio.emit('newConfigDetectorData', jsonConfig['config']['detector'])
+        # emits updated backend configuration
+        socketio.emit('newConfigBackendData', jsonConfig['config']['backend'])
+        # emits finished request
+        socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
     
 
 # Server thread

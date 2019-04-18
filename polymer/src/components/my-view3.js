@@ -36,16 +36,25 @@ class MyView3 extends connect(store)(PolymerElement) {
       </style>
       
       <div class="card">
+      
       <vaadin-form-layout>
         <vaadin-text-field label="Detector API Address" value="http://0.0.0.0:10000" id="det_api_field"></vaadin-text-field>
-        <div>
-        <vaadin-button id="loadConfigButton">Load</vaadin-button>
-        <vaadin-button id="editConfigButton" disabled>Edit</vaadin-button>
-        <vaadin-button id="submitConfigButton" disabled>Submit</vaadin-button>
-        <vaadin-button id="startConfigButton" disabled>Start</vaadin-button>
-        <vaadin-button id="stopConfigButton" disabled>Stop</vaadin-button>
-        <vaadin-button id="resetConfigButton" disabled>Reset</vaadin-button>
-        <vaadin-notification id="notify" duration="1500" position="top-end"></vaadin-notification>
+        <div class="vaadin-text-field-container" style="padding-top: var(--lumo-space-m);align-self: flex-start;color: var(--lumo-secondary-text-color);font-weight: 500;font-size: var(--lumo-font-size-s);margin-left: calc(var(--lumo-border-radius-m) / 4);transition: color 0.2s;line-height: 1;padding-bottom: 0.5em;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;position: relative;max-width: 100%;box-sizing: border-box;">
+        <vaadin-horizontal-layout size-full :expand>
+          <label part="label" id="vaadin-text-field-label-1">Control panel</label>
+          <vaadin-progress-bar hidden id="progressBar" indeterminate value="0" style="float:right;margin-right: calc(var(--lumo-border-radius-m) / 4);max-width: 65%;"></vaadin-progress-bar>
+          <div part="error-message" aria-live="assertive" aria-hidden="true" id="vaadin-text-field-error-1"></div>
+        </vaadin-horizontal-layout>
+          
+          <vaadin-horizontal-layout size-full :expand style="width=100%">
+          <vaadin-button id="loadConfigButton" :middle>Load</vaadin-button>
+          <vaadin-button id="editConfigButton" :middle disabled>Edit</vaadin-button>
+          <vaadin-button id="submitConfigButton" :middle disabled>Submit</vaadin-button>
+          <vaadin-button id="startConfigButton" :middle disabled>Start</vaadin-button>
+          <vaadin-button id="stopConfigButton" :middle disabled>Stop</vaadin-button>
+          <vaadin-button id="resetConfigButton" :middle disabled>Reset</vaadin-button>
+          <vaadin-notification id="notify" duration="1500" position="top-end"></vaadin-notification>
+        </vaadin-horizontal-layout>
         </div>
       </vaadin-form-layout>
       <vaadin-vertical-layout>
@@ -87,12 +96,13 @@ class MyView3 extends connect(store)(PolymerElement) {
     // gets view3 from shadowRoot
     const view3 = document.querySelector('body > my-app').shadowRoot.querySelector('app-drawer-layout > app-header-layout > iron-pages > my-view3')
   
-    // if input field was editted turn load button enabled
+    // if input field was editted turn load button enabled and disable others
     this.$.det_api_field.addEventListener("change", function(){
       view3.$.loadConfigButton.removeAttribute("disabled");
       // disables all the other buttons and configuration accordion
       view3.$.startConfigButton.setAttribute("disabled", "disabled");
       view3.$.editConfigButton.setAttribute("disabled", "disabled");
+      view3.$.submitConfigButton.setAttribute("disabled", "disabled");
       view3.$.stopConfigButton.setAttribute("disabled", "disabled");
       view3.$.resetConfigButton.setAttribute("disabled", "disabled");
       view3.$.config_accordion.setAttribute("disabled", "disabled");
@@ -118,6 +128,10 @@ class MyView3 extends connect(store)(PolymerElement) {
       // view3.$.submitConfigButton.removeAttribute("disabled");
       // disable edit fields
       view3.shadowRoot.querySelector('#config_accordion > vaadin-vertical-layout > dia-config').disableEditField();
+
+      // enables the progress bar
+      view3.$.progressBar.removeAttribute("hidden");
+      // updates the notification text
       notification.renderer = function(root) {
         root.textContent = 'Loading configuration from server '+ view3.$.det_api_field.value +'.';
       };
@@ -129,6 +143,8 @@ class MyView3 extends connect(store)(PolymerElement) {
     this.$.editConfigButton.addEventListener('click', function() {
       notification.open();
       if (view3.loaded_config === true){
+        // enables the progress bar
+        view3.$.progressBar.removeAttribute("hidden");
         // enable editting on the fields inside configuration accordion
         view3.shadowRoot.querySelector('#config_accordion > vaadin-vertical-layout > dia-config').enableEditField();
         // disables the other buttons and input field
@@ -140,7 +156,9 @@ class MyView3 extends connect(store)(PolymerElement) {
         view3.$.resetConfigButton.setAttribute("disabled", "disabled");
         // enables submit button
         view3.$.submitConfigButton.removeAttribute("disabled");
+        view3.$.progressBar.setAttribute("hidden", "hidden");
       }
+      
       notification.renderer = function(root) {
         root.textContent = 'Editing configuration from server '+ view3.$.det_api_field.value +'.';
       };
@@ -161,7 +179,10 @@ class MyView3 extends connect(store)(PolymerElement) {
       notification.renderer = function(root) {
         root.textContent = 'Starting server '+ view3.$.det_api_field.value +'.';
       };
+      // enables the progress bar
+      view3.$.progressBar.removeAttribute("hidden");
     });
+
     // reset button
     this.$.resetConfigButton.addEventListener('click', function() {
       notification.open();
@@ -170,9 +191,15 @@ class MyView3 extends connect(store)(PolymerElement) {
       }
       // disable edit fields
       view3.shadowRoot.querySelector('#config_accordion > vaadin-vertical-layout > dia-config').disableEditField();
+      // enable start button
+      view3.$.startConfigButton.removeAttribute("disabled");
+      // disable stop button
+      view3.$.stopConfigButton.setAttribute("disabled", "disabled");
       notification.renderer = function(root) {
         root.textContent = 'Resetting server '+ view3.$.det_api_field.value +'.';
       };
+      // enables the progress bar
+      view3.$.progressBar.removeAttribute("hidden");
     });
 
     // stop button
@@ -185,9 +212,13 @@ class MyView3 extends connect(store)(PolymerElement) {
       view3.shadowRoot.querySelector('#config_accordion > vaadin-vertical-layout > dia-config').disableEditField();
       // disable stop button
       view3.$.stopConfigButton.setAttribute("disabled", "disabled");
+      // enable start button
+      view3.$.startConfigButton.removeAttribute("disabled");
       notification.renderer = function(root) {
         root.textContent = 'Stopping server '+ view3.$.det_api_field.value +'.';
       };
+      // enables the progress bar
+      view3.$.progressBar.removeAttribute("hidden");
     });
 
     // submit button clicked
@@ -214,7 +245,13 @@ class MyView3 extends connect(store)(PolymerElement) {
       notification.renderer = function(root) {
         root.textContent = 'Submitting configuration to server '+ view3.$.det_api_field.value +'.';
       }; 
+      // enables the progress bar
+      view3.$.progressBar.removeAttribute("hidden");
     });
+  }
+
+  hideProgressBar(){
+    this.$.progressBar.setAttribute("hidden", "hidden");
   }
 
   stateChanged(state){
