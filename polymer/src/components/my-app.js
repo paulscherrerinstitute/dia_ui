@@ -194,6 +194,11 @@ class MyApp extends connect(store)(PolymerElement) {
       store.dispatch({type:'ERROR_LOADING_CONFIG', payload:msg});
     })
 
+    socket.on('problemWithRequest', function(msg){
+      const view3 = document.querySelector('body > my-app').shadowRoot.querySelector('app-drawer-layout > app-header-layout > iron-pages > my-view3')
+      view3.problemStartRequest(msg)
+    })
+
     socket.on('finishedRequestSuccessfully', function(msg){
       if (msg['status']==='ok'){
         document.querySelector('my-app').hideProgressBar();

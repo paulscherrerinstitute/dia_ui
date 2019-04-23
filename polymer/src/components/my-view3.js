@@ -16,6 +16,7 @@ import './dia_components/control-config.js'
 import './shared-styles.js';
 import '@vaadin/vaadin-accordion/vaadin-accordion.js';
 import '@vaadin/vaadin-button/vaadin-button.js';
+import '@vaadin/vaadin-dialog/vaadin-dialog.js';
 import '@vaadin/vaadin-icons/vaadin-icons.js';
 import '@vaadin/vaadin-tabs/vaadin-tabs.js';
 import '@vaadin/vaadin-notification/vaadin-notification.js';
@@ -44,6 +45,7 @@ class MyView3 extends connect(store)(PolymerElement) {
           <label part="label" id="vaadin-text-field-label-1">Control panel</label>
           <vaadin-progress-bar hidden id="progressBar" indeterminate value="0" style="float:right;margin-right: calc(var(--lumo-border-radius-m) / 4);max-width: 65%;"></vaadin-progress-bar>
           <div part="error-message" aria-live="assertive" aria-hidden="true" id="vaadin-text-field-error-1"></div>
+          <vaadin-dialog no-close-on-esc no-close-on-outside-click></vaadin-dialog>
         </vaadin-horizontal-layout>
           
           <vaadin-horizontal-layout size-full :expand style="width=100%">
@@ -135,6 +137,7 @@ class MyView3 extends connect(store)(PolymerElement) {
       notification.renderer = function(root) {
         root.textContent = 'Loading configuration from server '+ view3.$.det_api_field.value +'.';
       };
+      document.querySelector('body > my-app').shadowRoot.querySelector('app-drawer-layout > app-header-layout > iron-pages > my-view3').shadowRoot.querySelector('#config_accordion').setAttribute("opened", "opened")
     });
 
 
@@ -260,7 +263,40 @@ class MyView3 extends connect(store)(PolymerElement) {
     this.detector_config = state.app.detector_config;
     this.backend_config = state.app.backend_config;
     this.problemLoadingConfig = state.app.problemLoadingConfig;
-  }
+  };
+
+  problemStartRequest(msg){
+    
+
+  customElements.whenDefined('vaadin-dialog').then(function() {
+    const dialog = document.querySelector('body > my-app').shadowRoot.querySelector('app-drawer-layout > app-header-layout > iron-pages > my-view3').shadowRoot.querySelector('div > vaadin-form-layout > div > vaadin-horizontal-layout:nth-child(1) > vaadin-dialog')
+    dialog.renderer = function(root, dialog) {
+      // Check if there is a DOM generated with the previous renderer call to update its content instead of recreation
+      if (root.firstElementChild) {
+        return;
+      }
+      const div = window.document.createElement('div');
+      div.textContent = msg['status'];
+
+      const br = window.document.createElement('br');
+
+      const okButton = window.document.createElement('vaadin-button');
+      okButton.setAttribute('theme', 'primary');
+      okButton.textContent = 'OK';
+      okButton.setAttribute('style', 'margin-right: 1em');
+      okButton.addEventListener('click', function() {
+        dialog.opened = false;
+      });
+
+      root.appendChild(div);
+      root.appendChild(br);
+      root.appendChild(okButton);
+    };
+    dialog.opened = true;
+    
+  });
+
+  };
 
 }
 

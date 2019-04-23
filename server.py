@@ -70,7 +70,10 @@ def new_config_from_client(json, methods=['GET', 'POST']):
     try:
         client.set_config(json['configuration'])
     except Exception as e:
-        print('Problem setting new config to the server', e)
+        # emits problem
+        socketio.emit('problemWithRequest', {'status':'{0}'.format(e)})
+        # emits finished request
+        socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
     else:
         # updates the showing configuration on the client side.
         jsonConfig = client.get_config()
@@ -94,7 +97,10 @@ def stop_from_client(json, methods=['GET', 'POST']):
     try:
         client.stop()
     except Exception as e:
-        print('Problem stopping server', e)
+        # emits problem
+        socketio.emit('problemWithRequest', {'status':'{0}'.format(e)})
+        # emits finished request
+        socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
     else:
         # updates the showing configuration on the client side.
         jsonConfig = client.get_config()
@@ -118,7 +124,10 @@ def start_from_client(json, methods=['GET', 'POST']):
     try:
         client.start()
     except Exception as e:
-        print('Problem starting server', e)
+        # emits problem
+        socketio.emit('problemWithRequest', {'status':'{0}'.format(e)})
+        # emits finished request
+        socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
     else:
         # updates the showing configuration on the client side.
         jsonConfig = client.get_config()
@@ -142,7 +151,10 @@ def start_from_client(json, methods=['GET', 'POST']):
     try:
         client.reset()
     except Exception as e:
-        print('Problem resetting the server', e)
+        # emits problem
+        socketio.emit('problemWithRequest', {'status':'{0}'.format(e)})
+        # emits finished request
+        socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
     else:
         # updates the showing configuration on the client side.
         jsonConfig = client.get_config()
@@ -171,7 +183,10 @@ def get_detectorConfig(json, methods=['GET', 'POST']):
     try:
         jsonConfig = client.get_config()
     except Exception as e:
-        print('Problem resetting the server', e)
+        # emits problem
+        socketio.emit('problemWithRequest', {'status':'{0}'.format(e)})
+        # emits finished request
+        socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
     else:
         # emits updated writer configuration
         socketio.emit('newConfigStatus', {'state':jsonConfig['state'], 'status':jsonConfig['status']})
