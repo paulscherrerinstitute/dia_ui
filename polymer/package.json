@@ -30,6 +30,7 @@
     "@polymer/paper-progress": "^3.0.1",
     "@polymer/paper-tabs": "^3.0.1",
     "@polymer/paper-toast": "^3.0.1",
+    "@polymer/paper-tooltip": "^3.0.1",
     "@polymer/polymer": "^3.0.0",
     "@vaadin/vaadin": "^13.0.3",
     "@vaadin/vaadin-accordion": "^1.0.0",

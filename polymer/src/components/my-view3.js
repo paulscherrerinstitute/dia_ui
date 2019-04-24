@@ -23,6 +23,8 @@ import '@vaadin/vaadin-notification/vaadin-notification.js';
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar.js';
 import '@polymer/paper-dialog/paper-dialog.js';
 import '@polymer/paper-progress/paper-progress.js';
+import '@polymer/paper-tooltip/paper-tooltip.js';
+
 
 
 class MyView3 extends connect(store)(PolymerElement) {
@@ -40,6 +42,7 @@ class MyView3 extends connect(store)(PolymerElement) {
       
       <vaadin-form-layout>
         <vaadin-text-field label="Detector API Address" value="http://0.0.0.0:10000" id="det_api_field"></vaadin-text-field>
+        <paper-tooltip for="det_api_field" offset="0" position="right" animation-delay="0">Address of the DIA interface</paper-tooltip>
         <div class="vaadin-text-field-container" style="padding-top: var(--lumo-space-m);align-self: flex-start;color: var(--lumo-secondary-text-color);font-weight: 500;font-size: var(--lumo-font-size-s);margin-left: calc(var(--lumo-border-radius-m) / 4);transition: color 0.2s;line-height: 1;padding-bottom: 0.5em;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;position: relative;max-width: 100%;box-sizing: border-box;">
         <vaadin-horizontal-layout size-full :expand>
           <label part="label" id="vaadin-text-field-label-1">Control panel</label>
@@ -49,12 +52,18 @@ class MyView3 extends connect(store)(PolymerElement) {
         </vaadin-horizontal-layout>
           
           <vaadin-horizontal-layout size-full :expand style="width=100%">
-          <vaadin-button id="loadConfigButton" :middle>Load</vaadin-button>
+          <vaadin-button id="loadConfigButton" :middle description="teste">Load</vaadin-button>
+          <paper-tooltip for="loadConfigButton" offset="0" position="right" animation-delay="0">Loads configuration from DIA address</paper-tooltip>
           <vaadin-button id="editConfigButton" :middle disabled>Edit</vaadin-button>
+          <paper-tooltip for="editConfigButton" offset="0" position="right" animation-delay="0">Enable editting the configuration values</paper-tooltip>
           <vaadin-button id="submitConfigButton" :middle disabled>Submit</vaadin-button>
+          <paper-tooltip for="submitConfigButton" offset="0" position="right" animation-delay="0">Submits configuration the DIA address</paper-tooltip>
           <vaadin-button id="startConfigButton" :middle disabled>Start</vaadin-button>
+          <paper-tooltip for="startConfigButton" offset="0" position="right" animation-delay="0">Starts the DIA</paper-tooltip>
           <vaadin-button id="stopConfigButton" :middle disabled>Stop</vaadin-button>
+          <paper-tooltip for="stopConfigButton" offset="0" position="right" animation-delay="0">Stop the DIA</paper-tooltip>
           <vaadin-button id="resetConfigButton" :middle disabled>Reset</vaadin-button>
+          <paper-tooltip for="resetConfigButton" offset="0" position="right" animation-delay="0">Resets the DIA</paper-tooltip>
           <vaadin-notification id="notify" duration="1500" position="top-end"></vaadin-notification>
         </vaadin-horizontal-layout>
         </div>

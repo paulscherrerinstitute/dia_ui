@@ -182,6 +182,7 @@ def get_detectorConfig(json, methods=['GET', 'POST']):
     # get configuration from server  
     try:
         jsonConfig = client.get_config()
+        print(jsonConfig)
     except Exception as e:
         # emits problem
         socketio.emit('problemWithRequest', {'status':'{0}'.format(e)})
