@@ -44,22 +44,26 @@ start_flaskserver(){
 start_bsread_stream(){
     osascript \
     -e 'tell application "iTerm" to activate' \
-    -e 'tell application "System Events" to tell process "iTerm" to keystroke "python bsread_stream/start_stream.py"' \
+    -e 'tell application "System Events" to tell process "iTerm" to keystroke "python ../bsread_stream/start_stream.py"' \
     -e 'tell application "System Events" to tell process "iTerm" to key code 52'
 }
 
-# starts the detector intergration debug server
+# starts the detector integration debug server
 start_detector_debug_server(){
     osascript \
     -e 'tell application "iTerm" to activate' \
-    -e 'tell application "System Events" to tell process "iTerm" to keystroke "python detector_integration_api/build/lib/detector_integration_api/start_debug_server.py"' \
+    -e 'tell application "System Events" to tell process "iTerm" to keystroke "cd detector_integration_api"' \
+    -e 'tell application "System Events" to tell process "iTerm" to key code 52' \
+    -e 'tell application "System Events" to tell process "iTerm" to keystroke "export PYTHONPATH=`pwd`"' \
+    -e 'tell application "System Events" to tell process "iTerm" to key code 52' \
+    -e 'tell application "System Events" to tell process "iTerm" to keystroke "python detector_integration_api/start_default_server.py"' \
     -e 'tell application "System Events" to tell process "iTerm" to key code 52'
 }
 
 sets_debug_server_config(){
     osascript \
     -e 'tell application "iTerm" to activate' \
-    -e 'tell application "System Events" to tell process "iTerm" to keystroke "python set_debug_server_config.py"' \
+    -e 'tell application "System Events" to tell process "iTerm" to keystroke "python ../set_debug_server_config.py"' \
     -e 'tell application "System Events" to tell process "iTerm" to key code 52'
 }   
 
@@ -68,7 +72,9 @@ move_focus_to_top(){
     -e 'tell application "iTerm" to activate' \
     -e 'tell application "System Events" to tell process "iTerm" to keystroke "[" using {command down}' \
     -e 'tell application "System Events" to tell process "iTerm" to keystroke "[" using {command down}' \
-    -e 'tell application "System Events" to tell process "iTerm" to keystroke "[" using {command down}' 
+    -e 'tell application "System Events" to tell process "iTerm" to keystroke "[" using {command down}' \
+    -e 'tell application "System Events" to tell process "iTerm" to keystroke "cd polymer"' \
+    -e 'tell application "System Events" to tell process "iTerm" to key code 52'
 }   
 
 load_conda
