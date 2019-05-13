@@ -20,23 +20,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <script src="../node_modules/wct-browser-legacy/browser.js"></script>
 
     <!-- Import the element to test -->
-    <script type="module" src="../src/components/my-view1.js"></script>
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script type="module" src="../src/components/my-view3.js"></script>
   </head>
   <body>
     <test-fixture id="BasicView">
       <template>
-        <my-view1></my-view1>
+        <my-view3></my-view3>
       </template>
     </test-fixture>
 
     <script type="module">
-      suite('my-view1 tests', function() {
-        test('Number in circle should be 1', function() {
-          var myView = fixture('BasicView');
-          var circle = myView.shadowRoot.querySelector('.circle');
-          assert.equal('1', '1');
+        suite('my-view3 tests', function() {
+          test('Number in circle should be 1', function() {
+            var myView = fixture('BasicView');
+            var circle = myView.shadowRoot.querySelector('.card');
+            console.log(circle);
+            assert.equal('1', '1');
+          });
         });
-      });
-    </script>
+      </script>
   </body>
 </html>
