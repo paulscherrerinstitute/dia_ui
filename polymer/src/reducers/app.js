@@ -1,17 +1,16 @@
 const initialState = {
-    todos: ["teste", "demo", "CARAI"],
     beamEnergy: 5.0,
     problemLoadingConfig: "",
-    myJson: {
-        "name":"John",
-        "age":30,
-        "food": ["pizza", "pasta", "pesto"]
+    statistics: {
+        "statistics":"Test"
        },
     status_config : {"state": "",
        "status": ""},   
     detector_config : {"period": 0.0,
         "frames": 0.0,
         "exptime": 0.0,
+        "cycles": 0.0,
+        "timing": "auto",
         "dr": 0.0},
     backend_config :{"bit_depth": 0,
         "n_frames": 0},
@@ -39,6 +38,9 @@ const app = (state, action) => {
         }
         case 'UPDATE_WRITER_CONFIG':{
             return {...state, writer_config: action.payload}
+        }
+        case 'UPDATE_STATISTICS':{
+            return {...state, statistics: action.payload}
         }
         case 'UPDATE_BACKEND_CONFIG':{
             return {...state, backend_config: action.payload}

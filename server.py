@@ -68,6 +68,7 @@ def new_config_from_client(json, methods=['GET', 'POST']):
     client = DetectorIntegrationClient(api_det_address)
     # sets new configuration
     try:
+        client.stop()
         client.set_config(json['configuration'])
     except Exception as e:
         # emits problem
@@ -170,9 +171,6 @@ def start_from_client(json, methods=['GET', 'POST']):
         socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
     
 
-
-
-
 @socketio.on('emitLoad')
 def get_detectorConfig(json, methods=['GET', 'POST']):
     # gets address value from the detector api of interest
@@ -182,7 +180,6 @@ def get_detectorConfig(json, methods=['GET', 'POST']):
     # get configuration from server  
     try:
         jsonConfig = client.get_config()
-        print(jsonConfig)
     except Exception as e:
         # emits problem
         socketio.emit('problemWithRequest', {'status':'{0}'.format(e)})
@@ -200,6 +197,30 @@ def get_detectorConfig(json, methods=['GET', 'POST']):
         # emits finished request
         socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
     
+@socketio.on('emitGetStatistics')
+def get_Statistics(json, methods=['GET', 'POST']):
+    # gets address value from the detector api of interest
+    api_det_address = json['det_api_address']
+    # created the detector integration client object with the address of interest
+    client = DetectorIntegrationClient(api_det_address)
+    # get configuration from server  
+    try:
+        jsonStats = client.get_statistics()
+    except Exception as e:
+        print('entrou na exception...')
+        # emits problem
+        socketio.emit('problemWithRequest', {'status':'{0}'.format(e)})
+        # emits finished request
+        socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
+    else:
+        # emits updated writer configuration
+        socketio.emit('newStatisticsJson', jsonStats)
+        print('jsonGETSTATS', jsonStats)
+        
+        
+        # emits finished request
+        socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
+
 
 # Server thread
 thread = Thread()

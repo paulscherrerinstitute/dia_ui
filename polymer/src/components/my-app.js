@@ -88,9 +88,9 @@ class MyApp extends connect(store)(PolymerElement) {
           <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
             <!--a name="view1" href="[[rootPath]]view1">View One</a-->
             
-            <a name="view3" href="[[rootPath]]view3">DIA configuration</a>
-            <a name="view2" href="[[rootPath]]view2">Detector scan</a>
-            <a name="logView" href="[[rootPath]]logView">Log viewer</a>
+            <a id="DiaConfig" name="view3" href="[[rootPath]]view3">DIA configuration</a>
+            <a id="DetectorScan" name="view2" href="[[rootPath]]view2">Bsread stream</a>
+            <a id="LogViewer" name="logView" href="[[rootPath]]logView">Log viewer</a>
           </iron-selector>
           <div id="containerHigh"></div>
         </app-drawer>
@@ -106,7 +106,7 @@ class MyApp extends connect(store)(PolymerElement) {
           </app-header>
 
           <iron-pages selected="[[page]]" attr-for-selected="name" role="main">
-            <!--my-view1 name="view1"></my-view1-->
+            <my-view1 name="view1"></my-view1>
             <my-view2 name="view2"></my-view2>
             <my-view3 name="view3"></my-view3>
             <log-view name="logView"></log-view>
@@ -173,13 +173,16 @@ class MyApp extends connect(store)(PolymerElement) {
       document.querySelector('my-app').newMessage(msg.beam_energy);
     });
 
+    socket.on('newStatisticsJson', function(msg) {
+      store.dispatch({type:'UPDATE_STATISTICS', payload:msg});
+    });
+
     socket.on('newConfigWriterData', function(msg) {
       store.dispatch({type:'UPDATE_WRITER_CONFIG', payload:msg});
     });
 
     socket.on('newConfigStatus', function(msg) {
       store.dispatch({type:'UPDATE_STATUS_CONFIG', payload:msg});
-
     });
 
     socket.on('newConfigDetectorData', function(msg) {
@@ -203,6 +206,9 @@ class MyApp extends connect(store)(PolymerElement) {
       if (msg['status']==='ok'){
         document.querySelector('my-app').hideProgressBar();
       }
+      
+      
+      
     })
 
     

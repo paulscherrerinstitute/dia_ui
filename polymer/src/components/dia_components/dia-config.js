@@ -11,6 +11,7 @@
 import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
 import { connect } from 'pwa-helpers/connect-mixin.js';
 import { store } from '../../store.js';
+import '@polymer/paper-tooltip/paper-tooltip.js';
 import '@vaadin/vaadin-text-field/vaadin-text-field.js';
 import '@vaadin/vaadin-form-layout/vaadin-form-layout.js';
 import '../shared-styles.js';
@@ -37,6 +38,8 @@ class DiaConfig extends connect(store)(PolymerElement) {
         <vaadin-text-field id="frames" label="Frames" theme="small" value=[[detectorconfig_json.frames]] readonly></vaadin-text-field>
         <vaadin-text-field id="exptime" label="Exptime" theme="small" value=[[detectorconfig_json.exptime]] readonly></vaadin-text-field>
         <vaadin-text-field id="dr" label="Dr" theme="small" value=[[detectorconfig_json.dr]] readonly></vaadin-text-field>
+        <vaadin-text-field id="cycles" label="Cycles" theme="small" value=[[detectorconfig_json.cycles]] readonly></vaadin-text-field>
+        <vaadin-text-field id="timing" label="Timing" theme="small" value=[[detectorconfig_json.timing]] readonly></vaadin-text-field>
     </vaadin-form-layout>
     <h4>Backend</h4>
     <vaadin-form-layout>
@@ -77,6 +80,8 @@ class DiaConfig extends connect(store)(PolymerElement) {
     this.$.frames.setAttribute("readonly", "readonly");
     this.$.exptime.setAttribute("readonly", "readonly");
     this.$.dr.setAttribute("readonly", "readonly");
+    this.$.cycles.setAttribute("readonly", "readonly");
+    this.$.timing.setAttribute("readonly", "readonly");
     this.$.bitdepth.setAttribute("readonly", "readonly");
     this.$.n_frames.setAttribute("readonly", "readonly");
     this.$.output_file.setAttribute("readonly", "readonly");
@@ -90,6 +95,8 @@ class DiaConfig extends connect(store)(PolymerElement) {
       this.$.frames.removeAttribute("readonly");
       this.$.exptime.removeAttribute("readonly");
       this.$.dr.removeAttribute("readonly");
+      this.$.timing.removeAttribute("readonly");
+      this.$.cycles.removeAttribute("readonly");
       this.$.bitdepth.removeAttribute("readonly");
       this.$.n_frames.removeAttribute("readonly");
       this.$.output_file.removeAttribute("readonly");
@@ -108,6 +115,8 @@ class DiaConfig extends connect(store)(PolymerElement) {
     const detector_config = {'period': this.$.period.value,
         'frames': this.$.frames.value,
         'exptime': this.$.exptime.value,
+        'cycles': this.$.cycles.value,
+        'timing': this.$.timing.value,
         'dr': this.$.dr.value};
     return detector_config;
   }
@@ -116,6 +125,10 @@ class DiaConfig extends connect(store)(PolymerElement) {
     const backend_config = {'bit_depth': this.$.bitdepth.value,
         'n_frames': this.$.n_frames.value}; 
     return backend_config;
+  }
+
+  getStatus(){
+    return this.$.status.value;
   }
 }
 

@@ -12,6 +12,7 @@ import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
 import { connect } from 'pwa-helpers/connect-mixin.js';
 import { store } from '../store.js';
 import './dia_components/dia-config.js'
+import './dia_components/stats-config.js'
 import './dia_components/control-config.js'
 import './shared-styles.js';
 import '@vaadin/vaadin-accordion/vaadin-accordion.js';
@@ -24,6 +25,8 @@ import '@vaadin/vaadin-progress-bar/vaadin-progress-bar.js';
 import '@polymer/paper-dialog/paper-dialog.js';
 import '@polymer/paper-progress/paper-progress.js';
 import '@polymer/paper-tooltip/paper-tooltip.js';
+import '@polymer/iron-icon/iron-icon.js';
+import '@polymer/iron-icons/iron-icons.js';
 
 
 
@@ -38,11 +41,10 @@ class MyView3 extends connect(store)(PolymerElement) {
         }
       </style>
       
-      <div class="card">
-      
+      <div class="card">      
       <vaadin-form-layout>
         <vaadin-text-field label="Detector API Address" value="http://0.0.0.0:10000" id="det_api_field"></vaadin-text-field>
-        <paper-tooltip for="det_api_field" offset="0" position="right" animation-delay="0">Address of the DIA interface</paper-tooltip>
+        <paper-tooltip for="det_api_field"  position="right" animation-delay="0">Address of the DIA interface</paper-tooltip>
         <div class="vaadin-text-field-container" style="padding-top: var(--lumo-space-m);align-self: flex-start;color: var(--lumo-secondary-text-color);font-weight: 500;font-size: var(--lumo-font-size-s);margin-left: calc(var(--lumo-border-radius-m) / 4);transition: color 0.2s;line-height: 1;padding-bottom: 0.5em;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;position: relative;max-width: 100%;box-sizing: border-box;">
         <vaadin-horizontal-layout size-full :expand>
           <label part="label" id="vaadin-text-field-label-1">Control panel</label>
@@ -52,18 +54,18 @@ class MyView3 extends connect(store)(PolymerElement) {
         </vaadin-horizontal-layout>
           
           <vaadin-horizontal-layout size-full :expand style="width=100%">
-          <vaadin-button id="loadConfigButton" :middle description="teste">Load</vaadin-button>
-          <paper-tooltip for="loadConfigButton" offset="0" position="right" animation-delay="0">Loads configuration from DIA address</paper-tooltip>
-          <vaadin-button id="editConfigButton" :middle disabled>Edit</vaadin-button>
-          <paper-tooltip for="editConfigButton" offset="0" position="right" animation-delay="0">Enable editting the configuration values</paper-tooltip>
-          <vaadin-button id="submitConfigButton" :middle disabled>Submit</vaadin-button>
-          <paper-tooltip for="submitConfigButton" offset="0" position="right" animation-delay="0">Submits configuration the DIA address</paper-tooltip>
-          <vaadin-button id="startConfigButton" :middle disabled>Start</vaadin-button>
-          <paper-tooltip for="startConfigButton" offset="0" position="right" animation-delay="0">Starts the DIA</paper-tooltip>
-          <vaadin-button id="stopConfigButton" :middle disabled>Stop</vaadin-button>
-          <paper-tooltip for="stopConfigButton" offset="0" position="right" animation-delay="0">Stop the DIA</paper-tooltip>
-          <vaadin-button id="resetConfigButton" :middle disabled>Reset</vaadin-button>
-          <paper-tooltip for="resetConfigButton" offset="0" position="right" animation-delay="0">Resets the DIA</paper-tooltip>
+          <vaadin-button id="loadConfigButton" :middle><iron-icon icon="vaadin:download-alt"></iron-icon>Load</vaadin-button>
+          <paper-tooltip for="loadConfigButton"  position="right" animation-delay="0">Loads configuration from DIA address</paper-tooltip>
+          <vaadin-button id="editConfigButton" :middle disabled><iron-icon icon="vaadin:edit"></iron-icon>Edit</vaadin-button>
+          <paper-tooltip for="editConfigButton"  position="right" animation-delay="0">Enable editting the configuration values</paper-tooltip>
+          <vaadin-button id="submitConfigButton" :middle disabled><iron-icon icon="icons:send"></iron-icon>Submit</vaadin-button>
+          <paper-tooltip for="submitConfigButton"  position="right" animation-delay="0">Submits configuration the DIA address</paper-tooltip>
+          <vaadin-button id="startConfigButton" :middle disabled><iron-icon icon="vaadin:start-cog"></iron-icon>Start</vaadin-button>
+          <paper-tooltip for="startConfigButton"  position="right" animation-delay="0">Starts the DIA</paper-tooltip>
+          <vaadin-button id="stopConfigButton" :middle disabled><iron-icon icon="vaadin:stop-cog"></iron-icon>Stop</vaadin-button>
+          <paper-tooltip for="stopConfigButton"  position="right" animation-delay="0">Stop the DIA</paper-tooltip>
+          <vaadin-button id="resetConfigButton" :middle disabled><iron-icon icon="vaadin:refresh"></iron-icon>Reset</vaadin-button>
+          <paper-tooltip for="resetConfigButton" position="right" animation-delay="0">Resets the DIA</paper-tooltip>
           <vaadin-notification id="notify" duration="1500" position="top-end"></vaadin-notification>
         </vaadin-horizontal-layout>
         </div>
@@ -71,9 +73,15 @@ class MyView3 extends connect(store)(PolymerElement) {
       <vaadin-vertical-layout>
         <vaadin-acoordion>
         <vaadin-accordion-panel disabled id="config_accordion">
-          <div slot="summary">Configuration</div>
+          <div slot="summary">General configuration</div>
           <vaadin-vertical-layout>
             <dia-config></dia-config>
+          </vaadin-vertical-layout>
+        </vaadin-accordion-panel>
+        <vaadin-accordion-panel id="writer_accordion">
+          <div slot="summary">Statistics</div>
+          <vaadin-vertical-layout>
+            <stats-config></stats-config>
           </vaadin-vertical-layout>
         </vaadin-accordion-panel>
         </vaadin-acoordion>
@@ -89,8 +97,7 @@ class MyView3 extends connect(store)(PolymerElement) {
       json : String,
       loaded_config : Boolean,
       det_api_address : String,
-      state : String,
-      status : String
+      status_config : String
     }
   }
   connectedCallBack(){
@@ -110,6 +117,8 @@ class MyView3 extends connect(store)(PolymerElement) {
     // if input field was editted turn load button enabled and disable others
     this.$.det_api_field.addEventListener("change", function(){
       view3.$.loadConfigButton.removeAttribute("disabled");
+      // closes accordion
+      view3.$.config_accordion.removeAttribute("opened");
       // disables all the other buttons and configuration accordion
       view3.$.startConfigButton.setAttribute("disabled", "disabled");
       view3.$.editConfigButton.setAttribute("disabled", "disabled");
@@ -131,6 +140,7 @@ class MyView3 extends connect(store)(PolymerElement) {
       view3.$.config_accordion.removeAttribute("disabled");
       // disable the load button
       this.setAttribute("disabled", "disabled");
+    
       // enables the other buttons
       view3.$.startConfigButton.removeAttribute("disabled");
       view3.$.editConfigButton.removeAttribute("disabled");
@@ -147,6 +157,7 @@ class MyView3 extends connect(store)(PolymerElement) {
         root.textContent = 'Loading configuration from server '+ view3.$.det_api_field.value +'.';
       };
       document.querySelector('body > my-app').shadowRoot.querySelector('app-drawer-layout > app-header-layout > iron-pages > my-view3').shadowRoot.querySelector('#config_accordion').setAttribute("opened", "opened")
+      
     });
 
 
@@ -266,17 +277,25 @@ class MyView3 extends connect(store)(PolymerElement) {
     this.$.progressBar.setAttribute("hidden", "hidden");
   }
 
+  updateStartButton(status){
+  const view3 = document.querySelector('body > my-app').shadowRoot.querySelector('app-drawer-layout > app-header-layout > iron-pages > my-view3')
+  if (status != "IntegrationStatus.RUNNING" && this.loaded_config == true) {
+    view3.$.startConfigButton.removeAttribute("disabled");
+  }else{  
+    view3.$.startConfigButton.setAttribute("disabled", "disabled");
+  }};
+
   stateChanged(state){
     this.json = state.app.myJson;  
     this.writer_config = state.app.writer_config;
     this.detector_config = state.app.detector_config;
     this.backend_config = state.app.backend_config;
     this.problemLoadingConfig = state.app.problemLoadingConfig;
+    this.status_config = state.app.status_config;
+    this.updateStartButton(this.status_config['status'])
   };
 
   problemStartRequest(msg){
-    
-
   customElements.whenDefined('vaadin-dialog').then(function() {
     const dialog = document.querySelector('body > my-app').shadowRoot.querySelector('app-drawer-layout > app-header-layout > iron-pages > my-view3').shadowRoot.querySelector('div > vaadin-form-layout > div > vaadin-horizontal-layout:nth-child(1) > vaadin-dialog')
     dialog.renderer = function(root, dialog) {
