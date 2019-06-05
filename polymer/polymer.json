@@ -4,6 +4,7 @@
   "sources": [
     "images/**/*",
     "src/components/*",
+    "src/components/dia_components/*",
     "src/reducers/*",
     "src/*"
   ],

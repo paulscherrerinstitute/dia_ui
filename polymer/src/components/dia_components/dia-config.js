@@ -19,39 +19,73 @@ import '../shared-styles.js';
 class DiaConfig extends connect(store)(PolymerElement) {
   static get template() {
     return html`
-    <style include="shared-styles">
-        :host {
-          display: block;
+      <style include="shared-styles">
+          :host {
+              display: block;
+              padding: 10px;
+          }
+          .column {
+            float: left;
+            width: 31%;
+            padding: 10px;
+          }
+ 
+          @media screen and (max-width: 600px) {
+            .column {
+              width: 100%;
+            }
+          }
 
-          padding: 10px;
-        }
+          /* Clear floats after the columns */
+          .row:after {
+            content: "";
+            display: table;
+            clear: both;
+          }
       </style>
-    <h4>Status</h4>
-    <vaadin-form-layout>
-        <vaadin-text-field id="state" label="State" theme="small" value=[[status_config.state]] readonly></vaadin-text-field>
-        <vaadin-text-field id="status" label="Status" theme="small" value=[[status_config.status]] readonly></vaadin-text-field>
-    </vaadin-form-layout>
-    
-    <h4>Detector</h4>
-    <vaadin-form-layout>
-        <vaadin-text-field id="period" label="Period" theme="small" value=[[detectorconfig_json.period]] readonly></vaadin-text-field>
-        <vaadin-text-field id="frames" label="Frames" theme="small" value=[[detectorconfig_json.frames]] readonly></vaadin-text-field>
-        <vaadin-text-field id="exptime" label="Exptime" theme="small" value=[[detectorconfig_json.exptime]] readonly></vaadin-text-field>
-        <vaadin-text-field id="dr" label="Dr" theme="small" value=[[detectorconfig_json.dr]] readonly></vaadin-text-field>
-        <vaadin-text-field id="cycles" label="Cycles" theme="small" value=[[detectorconfig_json.cycles]] readonly></vaadin-text-field>
-        <vaadin-text-field id="timing" label="Timing" theme="small" value=[[detectorconfig_json.timing]] readonly></vaadin-text-field>
-    </vaadin-form-layout>
-    <h4>Backend</h4>
-    <vaadin-form-layout>
-        <vaadin-text-field id="bitdepth" label="bit_depth" theme="small" value=[[backendconfig_json.bit_depth]] readonly></vaadin-text-field>
-        <vaadin-text-field id="n_frames" label="n_frames" theme="small" value=[[backendconfig_json.n_frames]] readonly></vaadin-text-field>
-    </vaadin-form-layout>
-    <h4>Writer</h4>
-    <vaadin-form-layout>
-        <vaadin-text-field id="output_file" label="output_file" theme="small" value=[[writerconfig_json.output_file]] readonly></vaadin-text-field>
-        <vaadin-text-field id="nFrames" label="N_frames" theme="small" value=[[writerconfig_json.n_frames]] readonly></vaadin-text-field>
-        <vaadin-text-field id="user_id" label="user_id" theme="small" value=[[writerconfig_json.user_id]] readonly></vaadin-text-field>
-    </vaadin-form-layout>
+
+      <h4>General status</h4>
+      <vaadin-form-layout>
+          <vaadin-text-field id="state" label="State" theme="small" value=[[status_config.state]] readonly></vaadin-text-field>
+          <vaadin-text-field id="status" label="Status" theme="small" value=[[status_config.status]] readonly></vaadin-text-field>
+      </vaadin-form-layout>
+
+      <div class="row">
+        <div class="column">
+          <h2>Writer</h2>
+          <vaadin-form-layout>
+              <vaadin-text-field id="output_file" label="output_file" theme="small" value=[[writerconfig_json.output_file]] readonly></vaadin-text-field>
+              <vaadin-text-field id="nFrames" label="N_frames" theme="small" value=[[writerconfig_json.n_frames]] readonly></vaadin-text-field>
+              <vaadin-text-field id="user_id" label="user_id" theme="small" value=[[writerconfig_json.user_id]] readonly></vaadin-text-field>
+          </vaadin-form-layout>
+        </div>
+        <div class="column">
+          <h2>Detector</h2>
+          <vaadin-form-layout>
+              <vaadin-text-field id="period" label="Period" theme="small" value=[[detectorconfig_json.period]] readonly></vaadin-text-field>
+              <vaadin-text-field id="frames" label="Frames" theme="small" value=[[detectorconfig_json.frames]] readonly></vaadin-text-field>
+              <vaadin-text-field id="exptime" label="Exptime" theme="small" value=[[detectorconfig_json.exptime]] readonly></vaadin-text-field>
+              <vaadin-text-field id="dr" label="Dr" theme="small" value=[[detectorconfig_json.dr]] readonly></vaadin-text-field>
+              <vaadin-text-field id="cycles" label="Cycles" theme="small" value=[[detectorconfig_json.cycles]] readonly></vaadin-text-field>
+              <vaadin-text-field id="timing" label="Timing" theme="small" value=[[detectorconfig_json.timing]] readonly></vaadin-text-field>
+          </vaadin-form-layout>
+        </div>
+        <div class="column">
+          <h2>Backend</h2>
+          <vaadin-form-layout>
+              <vaadin-text-field id="bitdepth" label="bit_depth" theme="small" value=[[backendconfig_json.bit_depth]] readonly></vaadin-text-field>
+              <vaadin-text-field id="n_frames" label="n_frames" theme="small" value=[[backendconfig_json.n_frames]] readonly></vaadin-text-field>
+          </vaadin-form-layout>
+        </div>
+      </div>
+
+      
+      
+
+          
+          
+          
+      
     `;
   }
   

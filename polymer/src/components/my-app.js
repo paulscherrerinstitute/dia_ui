@@ -88,9 +88,9 @@ class MyApp extends connect(store)(PolymerElement) {
           <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
             <!--a name="view1" href="[[rootPath]]view1">View One</a-->
             
-            <a id="DiaConfig" name="view3" href="[[rootPath]]view3">DIA configuration</a>
-            <a id="DetectorScan" name="view2" href="[[rootPath]]view2">Bsread stream</a>
-            <a id="LogViewer" name="logView" href="[[rootPath]]logView">Log viewer</a>
+            <a id="DiaConfig" name="config" href="[[rootPath]]config">DIA configuration</a>
+            <!--a id="DetectorScan" name="view2" href="[[rootPath]]view2">Bsread stream</a-->
+            <!--a id="LogViewer" name="logView" href="[[rootPath]]logView">Log viewer</a-->
           </iron-selector>
           <div id="containerHigh"></div>
         </app-drawer>
@@ -101,14 +101,14 @@ class MyApp extends connect(store)(PolymerElement) {
           <app-header slot="header" condenses="" reveals="" effects="waterfall">
             <app-toolbar>
               <paper-icon-button icon="my-icons:menu" drawer-toggle=""></paper-icon-button>
-              <div main-title="">DIA UI</div>
+              <div main-title="">Detector integration API user interface</div>
             </app-toolbar>
           </app-header>
 
           <iron-pages selected="[[page]]" attr-for-selected="name" role="main">
             <my-view1 name="view1"></my-view1>
-            <my-view2 name="view2"></my-view2>
-            <my-view3 name="view3"></my-view3>
+            <!--my-view2 name="view2"></my-view2-->
+            <config-view name="config"></config-view>
             <log-view name="logView"></log-view>
             <my-view404 name="view404"></my-view404>
           </iron-pages>
@@ -146,8 +146,8 @@ class MyApp extends connect(store)(PolymerElement) {
      // If no page was found in the route data, page will be an empty string.
      // Show 'view1' in that case. And if the page doesn't exist, show 'view404'.
     if (!page) {
-      this.page = 'view3';
-    } else if (['view1', 'view2', 'view3', 'logView'].indexOf(page) !== -1) {
+      this.page = 'config';
+    } else if (['view1', 'config', 'logView'].indexOf(page) !== -1) {
       this.page = page;
     } else {
       this.page = 'view404';
@@ -173,8 +173,20 @@ class MyApp extends connect(store)(PolymerElement) {
       document.querySelector('my-app').newMessage(msg.beam_energy);
     });
 
-    socket.on('newStatisticsJson', function(msg) {
-      store.dispatch({type:'UPDATE_STATISTICS', payload:msg});
+    socket.on('newStatisticsWriterStart', function(msg) {
+      store.dispatch({type:'UPDATE_STATISTICS_WRITER_START', payload:msg});
+    });
+
+    socket.on('newStatisticsWriterFinish', function(msg) {
+      store.dispatch({type:'UPDATE_STATISTICS_WRITER_FINISH', payload:msg});
+    });
+
+    socket.on('newStatisticsWriterError', function(msg) {
+      store.dispatch({type:'UPDATE_STATISTICS_WRITER_ERROR', payload:msg});
+    });
+
+    socket.on('newStatisticsWriterAdv', function(msg) {
+      store.dispatch({type:'UPDATE_STATISTICS_WRITER_ADV', payload:msg});
     });
 
     socket.on('newConfigWriterData', function(msg) {
@@ -198,17 +210,15 @@ class MyApp extends connect(store)(PolymerElement) {
     })
 
     socket.on('problemWithRequest', function(msg){
-      const view3 = document.querySelector('body > my-app').shadowRoot.querySelector('app-drawer-layout > app-header-layout > iron-pages > my-view3')
-      view3.problemStartRequest(msg)
+      const configView = document.querySelector('body > my-app').shadowRoot.querySelector('app-drawer-layout > app-header-layout > iron-pages > config-view')
+      configView.problemStartRequest(msg)
     })
 
     socket.on('finishedRequestSuccessfully', function(msg){
       if (msg['status']==='ok'){
         document.querySelector('my-app').hideProgressBar();
       }
-      
-      
-      
+
     })
 
     
@@ -225,9 +235,10 @@ class MyApp extends connect(store)(PolymerElement) {
   }
 
   hideProgressBar(){
-    // gets view3 from shadowRoot
-    const view3 = document.querySelector('body > my-app').shadowRoot.querySelector('app-drawer-layout > app-header-layout > iron-pages > my-view3')
-    view3.hideProgressBar()
+    // gets configView from shadowRoot
+    const configView = document.querySelector('body > my-app').shadowRoot.querySelector('app-drawer-layout > app-header-layout > iron-pages > config-view')
+    configView.hideProgressBar()
+    configView.updateControlPanelButtons()
   }
   
 
@@ -248,11 +259,8 @@ class MyApp extends connect(store)(PolymerElement) {
       case 'view1':
         import('./my-view1.js');
         break;
-      case 'view2':
-        import('./my-view2.js');
-        break;
-      case 'view3':
-        import('./my-view3.js');
+      case 'config':
+        import('./config-view.js');
         break;
       case 'logView':
         import('./log-view.js');

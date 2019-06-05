@@ -1,9 +1,37 @@
 const initialState = {
     beamEnergy: 5.0,
     problemLoadingConfig: "",
-    statistics: {
-        "statistics":"Test"
-       },
+    statistics_bsread: {"info": {}},
+    statistics_ca_dump: {"info": {}},
+    statistics_backend: {"info": {}},
+    statistics_detector: {"info": {}},
+    statistics_writer: {"info": {}},
+    statistics_wr_start: {
+        "first_frame_id": 10,
+        "n_frames": 10,
+        "output_file": "---",
+        "user_id": 10,
+        "timestamp": "----",
+        "compression_method": "---"
+    },
+    statistics_wr_finish: {
+        "end_time": "---",
+        "n_total_written_frames": 10
+    },
+    statistics_wr_error: {
+        "error_def": "---",
+        "stack_frame": "---",
+        "user_msg": "---"
+    },
+    statistics_wr_adv: {
+        "n_written_frames": 10,
+        "n_received_frames": 10,
+        "n_free_slots": 10,
+        "processing_rate": 10,
+        "receiving_rate": 10,
+        "writting_rate": 10,
+        "avg_compressed_size": 10
+    },
     status_config : {"state": "",
        "status": ""},   
     detector_config : {"period": 0.0,
@@ -19,28 +47,31 @@ const initialState = {
         "user_id": 0}
 }
 
-const app = (state, action) => {
+const app = (state=initialState, action) => {
     switch (action.type){
-        case 'ADD': {
-            return {...state, todos: [...state.todos, action.payload]}
-        }
-        case 'REMOVE':{
-            return {...state, todos: [...state.todos.filter((it, index) => index !== action.payload)]}
-        }
         case 'UPDATE_BEAM':{
-            return {...state, beamEnergy: action.payload}
-        }
+            return {...state, beamEnergy: action.payload};
+        };
         case 'UPDATE_DETECTOR_CONFIG':{
-            return {...state, detector_config: action.payload}
-        }
+            return {...state, detector_config: action.payload};
+        };
         case 'UPDATE_STATUS_CONFIG':{
-            return {...state, status_config: action.payload}
-        }
+            return {...state, status_config: action.payload};
+        };
         case 'UPDATE_WRITER_CONFIG':{
-            return {...state, writer_config: action.payload}
+            return {...state, writer_config: action.payload};
+        };
+        case 'UPDATE_STATISTICS_WRITER_START':{
+            return {...state, statistics_wr_start: action.payload};
         }
-        case 'UPDATE_STATISTICS':{
-            return {...state, statistics: action.payload}
+        case 'UPDATE_STATISTICS_WRITER_FINISH':{
+            return {...state, statistics_wr_finish: action.payload};
+        }
+        case 'UPDATE_STATISTICS_WRITER_ERROR':{
+            return {...state, statistics_wr_error: action.payload};
+        }
+        case 'UPDATE_STATISTICS_WRITER_ADV':{
+            return {...state, statistics_wr_adv: action.payload};
         }
         case 'UPDATE_BACKEND_CONFIG':{
             return {...state, backend_config: action.payload}
@@ -49,7 +80,7 @@ const app = (state, action) => {
             return {...state, problemLoadingConfig: action.payload}
         }
         default:
-            return initialState
+            return state
     }
 }
 

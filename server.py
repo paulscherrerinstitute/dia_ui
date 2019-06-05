@@ -31,9 +31,9 @@ def favicon():
 #     return app.send_static_file('./service-worker.js')
 
 @app.route('/', methods=['GET'])
-@app.route('/view1', methods=['GET'])
-@app.route('/view2', methods=['GET'])
-@app.route('/view3', methods=['GET'])
+# @app.route('/view1', methods=['GET'])
+# @app.route('/view2', methods=['GET'])
+@app.route('/config', methods=['GET'])
 def root():
     return app.send_static_file('index.html')
 
@@ -207,19 +207,46 @@ def get_Statistics(json, methods=['GET', 'POST']):
     try:
         jsonStats = client.get_statistics()
     except Exception as e:
-        print('entrou na exception...')
         # emits problem
         socketio.emit('problemWithRequest', {'status':'{0}'.format(e)})
         # emits finished request
         socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
     else:
-        # emits updated writer configuration
-        socketio.emit('newStatisticsJson', jsonStats)
-        print('jsonGETSTATS', jsonStats)
-        
-        
-        # emits finished request
-        socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
+        if jsonStats['statistics'] != None:
+            idStats = jsonStats['statistics']
+            # checks for the group 
+            if "statistics_wr_start" in idStats:
+                # emits writer start configuration
+                socketio.emit('newStatisticsWriterStart', idStats['statistics_wr_start'])
+                # emits finished request
+                socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
+            elif 'statistics_wr_finish' in idStats:
+                # emits writer finish configuration
+                socketio.emit('newStatisticsWriterFinish', idStats['statistics_wr_finish'])
+                # emits finished request
+                socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
+            elif 'statistics_wr_error' in idStats:
+                # emits writer error configuration
+                socketio.emit('newStatisticsWriterError', idStats['statistics_wr_error'])
+                # emits finished request
+                socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
+            elif 'statistics_wr_adv' in idStats:
+                # emits writer statistics adv configuration
+                socketio.emit('newStatisticsWriterAdv', idStats['statistics_wr_adv'])
+                # emits finished request
+                socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
+            else: 
+                socketio.emit('problemWithRequest', {'status':'Problem with statistics json request.'})
+            # elif "backend" in jsonStats['statistics']:
+            #     # to be implemented
+            #     print('Requested backend statistics... to be implemented...')
+            #     socketio.emit('problemWithRequest', {'status':'Backend statistics not yet implemented...'})
+            # elif "detector" in jsonStats['statistics']:
+            #     # to be implemented
+            #     print('Requested detector statistics... to be implemented...')
+            #     socketio.emit('problemWithRequest', {'status':'Detector statistics not yet implemented...'})
+            # else:
+            #     socketio.emit('problemWithRequest', {'status':'Problem with statistics json file...'})
 
 
 # Server thread
