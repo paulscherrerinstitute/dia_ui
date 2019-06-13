@@ -11,10 +11,10 @@
 import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
 import { connect } from 'pwa-helpers/connect-mixin.js';
 import { store } from '../../store.js';
-import '../../highchart/highchart.js'
-import '../../highchart/exporting.js'
-import '../../highchart/export-data.js'
-import '../../highchart/series-label.js'
+import '../../highchart/highchart.js';
+import '../../highchart/exporting.js';
+import '../../highchart/export-data.js';
+import '../../highchart/series-label.js';
 import '../shared-styles.js';
 
 
@@ -55,28 +55,28 @@ class StatsAdvHigh extends connect(store)(PolymerElement) {
             height: 400px; 
             margin: 0 auto;
           }
+          .highcharts-series-label {
+            display:none;
+          }
       </style>
       
         <div class="card">
             <div id="containerHighchart"></div>
-        </div>   
-      
-
-
-    `;
-  }
+        </div>
+    `;}
 
   ready(){
-    super.ready()
+    super.ready();
     this.newDataReceived = false;
-    var $elementToHigh = this.shadowRoot.querySelector('#containerHighchart')
+    var $elementToHighchart = this.shadowRoot.querySelector('#containerHighchart');
     var self = this;
+    
 
-    this.highchartElement = new Highcharts.chart($elementToHigh, {
+    this.highchartElement = new Highcharts.chart($elementToHighchart, {
       chart: {
           type: 'spline',
-          animation: Highcharts.svg, // don't animate in old IE
-          marginRight: 60,
+          animation: Highcharts.svg, 
+          marginLeft: 60,
           marginRight: 60,
           events: {
               load: function () {
@@ -94,7 +94,7 @@ class StatsAdvHigh extends connect(store)(PolymerElement) {
                     seriesWrittingRate.addPoint([x, y], true, true);
                     self.newDataReceived = false;
                   }
-                  }, 500);
+                  }, 1000);
               }
           }
       },
@@ -104,9 +104,35 @@ class StatsAdvHigh extends connect(store)(PolymerElement) {
       },
   
       title: {
-          text: 'Statistics monitor data',
+          text: 'Advanced writer statistics ',
           align: 'left'
       },
+      plotOptions: {
+        series: {
+            dataLabels: {
+                enabled: false,
+            },
+            cursor: 'pointer',
+            marker: {
+                lineWidth: 1
+            }
+          }
+      },
+      exporting: {
+        buttons: {
+          contextButton: {
+            menuItems: ["downloadPNG",
+                        "downloadJPEG",
+                        "downloadPDF",
+                        "downloadSVG",
+                        "separator",
+                        "downloadCSV",
+                        "downloadXLS"]
+          }
+        }
+      },
+
+
       xAxis: {
           type: 'datetime',
           crosshair: true,
@@ -143,18 +169,13 @@ class StatsAdvHigh extends connect(store)(PolymerElement) {
       }],
       tooltip: {
           headerFormat: '<b>{series.name}</b><br/>',
-          pointFormat: '{point.x:%Y-%m-%d %H:%M:%S}<br/>{point.y:.5f}'
+          pointFormat: '{point.x:%Y-%m-%d %H:%M:%S}<br/>{point.y:.5f}',
+          shared: true,
+          crosshairs: true
       },
       legend: {
-        layout: 'vertical',
         align: 'left',
-        x: 50,
         verticalAlign: 'top',
-        y: 50,
-        floating: true,
-        backgroundColor:
-            Highcharts.defaultOptions.legend.backgroundColor || // theme
-            'rgba(255,255,255,0.25)'
     },
       series: [{
           name: 'Received frame',

@@ -7,43 +7,45 @@ const initialState = {
     statistics_detector: {"info": {}},
     statistics_writer: {"info": {}},
     statistics_wr_start: {
-        "first_frame_id": 10,
-        "n_frames": 10,
+        "first_frame_id": 0,
+        "n_frames": 0,
         "output_file": "---",
-        "user_id": 10,
+        "user_id": 0,
         "timestamp": "----",
         "compression_method": "---"
     },
     statistics_wr_finish: {
         "end_time": "---",
-        "n_total_written_frames": 10
+        "enable": false,
+        "n_total_written_frames": 0
     },
     statistics_wr_error: {
         "error_def": "---",
+        "enable": false,
         "stack_frame": "---",
         "user_msg": "---"
     },
     statistics_wr_adv: {
-        "n_written_frames": 10,
-        "n_received_frames": 10,
-        "n_free_slots": 10,
-        "processing_rate": 10,
-        "receiving_rate": 10,
-        "writting_rate": 10,
-        "avg_compressed_size": 10
+        "n_written_frames": 0,
+        "n_received_frames": 0,
+        "n_free_slots": 0,
+        "processing_rate": 0,
+        "receiving_rate": 0,
+        "writting_rate": 0,
+        "avg_compressed_size": 0
     },
-    status_config : {"state": "",
-       "status": ""},   
+    status_config : {"state": "--",
+       "status": "--"},   
     detector_config : {"period": 0.0,
         "frames": 0.0,
         "exptime": 0.0,
         "cycles": 0.0,
-        "timing": "auto",
+        "timing": "--",
         "dr": 0.0},
     backend_config :{"bit_depth": 0,
         "n_frames": 0},
-    writer_config : {"output_file": "/tmp/test.h5",
-        "n_frames": 100,
+    writer_config : {"output_file": "--",
+        "n_frames": 0,
         "user_id": 0}
 }
 
@@ -80,7 +82,7 @@ const app = (state=initialState, action) => {
             return {...state, problemLoadingConfig: action.payload}
         }
         default:
-            return state
+            return initialState
     }
 }
 

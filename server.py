@@ -1,4 +1,4 @@
-import optparse, os
+import optparse, os, sys
 
 from bsread import source
 from detector_integration_api import DetectorIntegrationClient
@@ -116,6 +116,46 @@ def stop_from_client(json, methods=['GET', 'POST']):
         # emits finished request
         socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
 
+@socketio.on('emitStartDiaService')
+def start_dia_script(json, methods=['GET', 'POST']):
+    try:
+        # starts dia service
+        #os.system("systemctl start dia.service")
+        os.system("sh start_dia.sh")
+        
+    except Exception as e:
+        # emits problem
+        socketio.emit('problemWithRequest', {'status':'{0}'.format(e)})
+        # emits finished request
+        socketio.emit('finishedRequestSuccessfully', {'status':'ok'})    
+    else:
+        # verifies status
+        if (status == 0): # 0 == Success
+            # Dia now running
+            api_det_address = json['det_api_address']
+            # created the detector integration client object with the address of interest
+            client = DetectorIntegrationClient(api_det_address)
+            jsonConfig = client.get_config()
+            # emits updated writer configuration
+            socketio.emit('newConfigStatus', {'state':jsonConfig['state'], 'status':jsonConfig['status']})
+            # emits updated writer configuration
+            socketio.emit('newConfigWriterData', jsonConfig['config']['writer'])
+            # emits updated detector configuration
+            socketio.emit('newConfigDetectorData', jsonConfig['config']['detector'])
+            # emits updated backend configuration
+            socketio.emit('newConfigBackendData', jsonConfig['config']['backend'])
+            # emits finished request
+            socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
+        else:
+            # emits problem
+            socketio.emit('problemWithRequest', {'status':'Something went wrong while starting DIA service, please start it manually.'})
+            # emits finished request
+            socketio.emit('finishedRequestSuccessfully', {'status':'ok'})    
+
+
+
+    
+
 @socketio.on('emitStart')
 def start_from_client(json, methods=['GET', 'POST']):
     api_det_address = json['det_api_address']
@@ -172,7 +212,7 @@ def start_from_client(json, methods=['GET', 'POST']):
     
 
 @socketio.on('emitLoad')
-def get_detectorConfig(json, methods=['GET', 'POST']):
+def get_diaConfig(json, methods=['GET', 'POST']):
     # gets address value from the detector api of interest
     api_det_address = json['det_api_address']
     # created the detector integration client object with the address of interest

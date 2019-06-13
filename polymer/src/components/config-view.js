@@ -38,6 +38,7 @@ class ConfigView extends connect(store)(PolymerElement) {
 
           padding: 10px;
         }
+
         #det_api_field{
           width:100%;
         }
@@ -71,7 +72,8 @@ class ConfigView extends connect(store)(PolymerElement) {
           display: table;
           clear: both;
         }
-          
+        
+
 
       </style>
 
@@ -89,7 +91,7 @@ class ConfigView extends connect(store)(PolymerElement) {
                     <label part="label" id="vaadin-text-field-label-1">Control panel</label>
                     <vaadin-progress-bar hidden id="progressBar" indeterminate value="0" style="float:right;margin-right: calc(var(--lumo-border-radius-m) / 4);max-width: 65%;"></vaadin-progress-bar>
                     <div part="error-message" aria-live="assertive" aria-hidden="true" id="vaadin-text-field-error-1"></div>
-                    <vaadin-dialog no-close-on-esc no-close-on-outside-click></vaadin-dialog>
+                    <vaadin-dialog id="dialog" no-close-on-esc no-close-on-outside-click></vaadin-dialog>
                 </vaadin-horizontal-layout>
             </div>
             <vaadin-horizontal-layout id="control_panel_field">
@@ -164,7 +166,7 @@ class ConfigView extends connect(store)(PolymerElement) {
     const notification = this.$.notify;
     // requests configuration from server
     var socket = io.connect('http://' + document.domain + ':' + location.port);
-    // gets view3 from shadowRoot
+    // gets configView from shadowRoot
     const configView = document.querySelector('body > my-app').shadowRoot.querySelector('app-drawer-layout > app-header-layout > iron-pages > config-view')
   
     // if input field was editted turn load button enabled and disable others
@@ -174,8 +176,8 @@ class ConfigView extends connect(store)(PolymerElement) {
       configView.$.config_accordion.removeAttribute("opened");
       configView.$.stats_accordion.removeAttribute("opened");
       // stops the stats monitor
-      // const statsConfig = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#stats_accordion > vaadin-vertical-layout > stats-config")
-      // statsConfig.stopStatisticsWorker()
+      const statsConfig = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#stats_accordion > vaadin-vertical-layout > stats-config");
+      statsConfig.stopStatisticsWorker();
 
       // disables all the other buttons and configuration accordion
       configView.$.startConfigButton.setAttribute("disabled", "disabled");
@@ -200,7 +202,7 @@ class ConfigView extends connect(store)(PolymerElement) {
       configView.$.config_accordion.removeAttribute("disabled");
       // enables the statistics accordion
       configView.$.stats_accordion.removeAttribute("disabled");
-      // starts the statistics worker
+      // IF Successfull, starts the statistics worker 
       const statsConfig = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#stats_accordion > vaadin-vertical-layout > stats-config")
       statsConfig.startStatisticsWorker()
       // disable the load button
@@ -290,6 +292,9 @@ class ConfigView extends connect(store)(PolymerElement) {
       };
       // enables the progress bar
       configView.$.progressBar.removeAttribute("hidden");
+      // stops the stats monitor
+      const statsConfig = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#stats_accordion > vaadin-vertical-layout > stats-config")
+      statsConfig.stopStatisticsWorker();
     });
 
     // stop button
@@ -313,6 +318,11 @@ class ConfigView extends connect(store)(PolymerElement) {
       };
       // enables the progress bar
       configView.$.progressBar.removeAttribute("hidden");
+
+      // stops the stats monitor
+      const statsConfig = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#stats_accordion > vaadin-vertical-layout > stats-config")
+      statsConfig.stopStatisticsWorker();
+
     });
 
     // submit button clicked
@@ -383,7 +393,7 @@ class ConfigView extends connect(store)(PolymerElement) {
 
   problemStartRequest(msg){
   customElements.whenDefined('vaadin-dialog').then(function() {
-    const dialog = document.querySelector('body > my-app').shadowRoot.querySelector('app-drawer-layout > app-header-layout > iron-pages > config-view').shadowRoot.querySelector('div > vaadin-form-layout > div > vaadin-horizontal-layout:nth-child(1) > vaadin-dialog')
+    const dialog = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("div:nth-child(2) > div > div.columnRight > div > vaadin-horizontal-layout > vaadin-dialog");
     dialog.renderer = function(root, dialog) {
       // Check if there is a DOM generated with the previous renderer call to update its content instead of recreation
       if (root.firstElementChild) {
@@ -391,6 +401,28 @@ class ConfigView extends connect(store)(PolymerElement) {
       }
       const div = window.document.createElement('div');
       div.textContent = msg['status'];
+
+      // if connection was not made, stop statistics and disables config/statistics
+      if (div.textContent.includes("Failed to establish a new connection")){
+        // stops the stats monitor
+        const statsConfig = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#stats_accordion > vaadin-vertical-layout > stats-config");
+        statsConfig.stopStatisticsWorker();
+        const configView = document.querySelector('body > my-app').shadowRoot.querySelector('app-drawer-layout > app-header-layout > iron-pages > config-view');
+        // closes accordions
+        configView.$.config_accordion.removeAttribute("opened");
+        configView.$.stats_accordion.removeAttribute("opened");
+        // disables accordions
+        configView.$.config_accordion.setAttribute("disabled", "disabled");
+        configView.$.stats_accordion.setAttribute("disabled", "disabled");
+        // enable the load
+        configView.$.loadConfigButton.removeAttribute("disabled");
+        // disables control pannel buttons
+        configView.$.startConfigButton.setAttribute("disabled", "disabled");
+        configView.$.editConfigButton.setAttribute("disabled", "disabled");
+        configView.$.submitConfigButton.setAttribute("disabled", "disabled");
+        configView.$.stopConfigButton.setAttribute("disabled", "disabled");
+        configView.$.resetConfigButton.setAttribute("disabled", "disabled");
+      }
 
       const br = window.document.createElement('br');
 

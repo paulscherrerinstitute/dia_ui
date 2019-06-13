@@ -14,6 +14,7 @@ import { store } from '../../store.js';
 import '@polymer/paper-tooltip/paper-tooltip.js';
 import '@vaadin/vaadin-text-field/vaadin-text-field.js';
 import '@vaadin/vaadin-form-layout/vaadin-form-layout.js';
+import '@vaadin/vaadin-progress-bar/vaadin-progress-bar.js';
 import '../shared-styles.js';
 
 class DiaConfig extends connect(store)(PolymerElement) {
@@ -27,12 +28,18 @@ class DiaConfig extends connect(store)(PolymerElement) {
           .column {
             float: left;
             width: 31%;
-            padding: 10px;
+            opacity: 1;
+            border: 1px dashed var(--lumo-contrast-30pct);
+            padding: 5px;
+            margin: 5px;
+            position: relative;
+            border-radius: var(--lumo-border-radius);
           }
  
           @media screen and (max-width: 600px) {
             .column {
               width: 100%;
+              padding: 10px;
             }
           }
 
@@ -48,6 +55,7 @@ class DiaConfig extends connect(store)(PolymerElement) {
       <vaadin-form-layout>
           <vaadin-text-field id="state" label="State" theme="small" value=[[status_config.state]] readonly></vaadin-text-field>
           <vaadin-text-field id="status" label="Status" theme="small" value=[[status_config.status]] readonly></vaadin-text-field>
+          <vaadin-progress-bar disabled id="progress-bar-custom-bounds" min="0" max="1"></vaadin-progress-bar>
       </vaadin-form-layout>
 
       <div class="row">
@@ -61,7 +69,10 @@ class DiaConfig extends connect(store)(PolymerElement) {
         </div>
         <div class="column">
           <h2>Detector</h2>
-          <vaadin-form-layout>
+          <vaadin-form-layout responsive-steps='[
+            {"minWidth": 0, "columns": 1},
+            {"minWidth": "100px", "columns": 2}
+          ]'>
               <vaadin-text-field id="period" label="Period" theme="small" value=[[detectorconfig_json.period]] readonly></vaadin-text-field>
               <vaadin-text-field id="frames" label="Frames" theme="small" value=[[detectorconfig_json.frames]] readonly></vaadin-text-field>
               <vaadin-text-field id="exptime" label="Exptime" theme="small" value=[[detectorconfig_json.exptime]] readonly></vaadin-text-field>
@@ -78,14 +89,6 @@ class DiaConfig extends connect(store)(PolymerElement) {
           </vaadin-form-layout>
         </div>
       </div>
-
-      
-      
-
-          
-          
-          
-      
     `;
   }
   
@@ -94,9 +97,19 @@ class DiaConfig extends connect(store)(PolymerElement) {
       writerconfig_json : String,
       detectorconfig_json : String,
       backendconfig_json : String,
+      progressBarStatusValue : Number,
       status_config : String
     }
   }
+
+  ready(){
+    super.ready();
+    var progressBarStatus = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#config_accordion > vaadin-vertical-layout > dia-config").shadowRoot.querySelector("#progress-bar-custom-bounds"); 
+    progressBarStatus.value = 0;
+
+
+  }
+
   connectedCallBack(){
     super.connectedCallBack();
     connectToRedux(this); 
@@ -107,6 +120,12 @@ class DiaConfig extends connect(store)(PolymerElement) {
     this.detectorconfig_json = state.app.detector_config;   
     this.backendconfig_json = state.app.backend_config;   
     this.status_config = state.app.status_config;
+    var progressBarStatus = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#config_accordion > vaadin-vertical-layout > dia-config").shadowRoot.querySelector("#progress-bar-custom-bounds");
+    if (this.status_config.status == "IntegrationStatus.RUNNING"){
+      progressBarStatus.removeAttribute("disabled"); 
+    }else{
+      progressBarStatus.setAttribute("disabled", "disabled");
+    }
   }
 
   disableEditField(){
@@ -163,6 +182,11 @@ class DiaConfig extends connect(store)(PolymerElement) {
 
   getStatus(){
     return this.$.status.value;
+  }
+
+  setProgressBarValue(value){
+    var progressBarStatus = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#config_accordion > vaadin-vertical-layout > dia-config").shadowRoot.querySelector("#progress-bar-custom-bounds"); 
+    progressBarStatus.value = value;
   }
 }
 

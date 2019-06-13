@@ -44,6 +44,7 @@ class StatsConfig extends connect(store)(PolymerElement) {
           width: 80%;
           background-color:#f3f5f7;
         }
+
       </style>
 
     <!--vaadin-horizontal-layout size-full :expand>
@@ -75,18 +76,21 @@ class StatsConfig extends connect(store)(PolymerElement) {
           <vaadin-tabs orientation="vertical" theme="small" selected="{{subTab}}" :left >
             <vaadin-tab id="writer_start_tab_title">Start</vaadin-tab>
             <paper-tooltip for="writer_start_tab_title" position="bottom" animation-delay="0">Shows the writer's start statistics.</paper-tooltip>
-            <vaadin-tab id="writer_finish_tab_title">Finish</vaadin-tab>
-            <paper-tooltip for="writer_finish_tab_title" position="bottom" animation-delay="0">Shows the writer's finish statistics.</paper-tooltip>
-            <vaadin-tab id="writer_error_tab_title">Error</vaadin-tab>
-            <paper-tooltip for="writer_error_tab_title" position="bottom" animation-delay="0">Shows the writer's error statistics.</paper-tooltip>
             <vaadin-tab id="writer_adv_tab_title">Advanced</vaadin-tab>
             <paper-tooltip for="writer_adv_tab_title" position="bottom" animation-delay="0">Shows the writer's advanced statistics.</paper-tooltip>
+            <vaadin-tab id="writer_error_tab_title">Error</vaadin-tab>
+            <paper-tooltip for="writer_error_tab_title" position="bottom" animation-delay="0">Shows the writer's error statistics.</paper-tooltip>
+            <vaadin-tab id="writer_finish_tab_title">Finish</vaadin-tab>
+            <paper-tooltip for="writer_finish_tab_title" position="bottom" animation-delay="0">Shows the writer's finish statistics.</paper-tooltip>          
           </vaadin-tabs>
         </div>
         <div id="rightContent" class="card">
         <iron-pages selected="[[subTab]]" >
           <page>
-            <vaadin-form-layout class="custom-steps">
+            <vaadin-form-layout class="custom-steps" responsive-steps='[
+              {"minWidth": 0, "columns": 1},
+              {"minWidth": "600px", "columns": 3}
+            ]'>
               <vaadin-text-field id="statistics_first_frame_id" label="First frame ID" theme="small" value=[[statistics_wr_start.first_frame_id]] readonly colspan="1"></vaadin-text-field>
               <vaadin-text-field id="statistics_n_frames" label="N frames" theme="small" value=[[statistics_wr_start.n_frames]] readonly colspan="1"></vaadin-text-field>
               <vaadin-text-field id="statistics_output_file" label="Output file" theme="small" value=[[statistics_wr_start.output_file]] readonly colspan="1"></vaadin-text-field>
@@ -96,20 +100,10 @@ class StatsConfig extends connect(store)(PolymerElement) {
             </vaadin-form-layout>
           </page>
           <page>
-            <vaadin-form-layout>
-              <vaadin-text-field id="statistics_n_total_written_frames" label="N total written frames" theme="small" value=[[statistics_wr_finish.n_total_written_frames]] readonly></vaadin-text-field>
-              <vaadin-text-field id="statistics_end_time" label="End time" theme="small" value=[[statistics_wr_finish.end_time]] readonly></vaadin-text-field>
-            </vaadin-form-layout>
-          </page>
-          <page>
-            <vaadin-form-layout>
-              <vaadin-text-field id="statistics_error_def" label="N total written frames" theme="small" value=[[statistics_wr_error.error_def]] readonly></vaadin-text-field>
-              <vaadin-text-field id="statistics_stack_frame" label="End time" theme="small" value=[[statistics_wr_error.stack_frame]] readonly></vaadin-text-field>
-              <vaadin-text-field id="statistics_user_msg" label="User msg" theme="small" value=[[statistics_wr_error.user_msg]] readonly></vaadin-text-field>
-            </vaadin-form-layout>
-          </page>
-          <page>
-            <vaadin-form-layout>
+            <vaadin-form-layout responsive-steps='[
+              {"minWidth": 0, "columns": 1},
+              {"minWidth": "600px", "columns": 3}
+            ]'>
               <vaadin-text-field id="statistics_n_written_frames" label="N written frames" theme="small" value=[[statistics_wr_adv.n_written_frames]] readonly></vaadin-text-field>
               <vaadin-text-field id="statistics_n_received_frames" label="N received frames" theme="small" value=[[statistics_wr_adv.n_received_frames]] readonly></vaadin-text-field>
               <vaadin-text-field id="statistics_n_free_slots" label="N free slots" theme="small" value=[[statistics_wr_adv.n_free_slots]] readonly></vaadin-text-field>
@@ -119,6 +113,26 @@ class StatsConfig extends connect(store)(PolymerElement) {
               <vaadin-text-field id="statistics_avg_compressed_size" label="Avg compressed size" theme="small" value=[[statistics_wr_adv.avg_compressed_size]] readonly></vaadin-text-field>
             </vaadin-form-layout>
             <stats-adv-high></stats-adv-high>
+          </page>
+          <page>
+            <vaadin-form-layout id="stat_error_id" disabled responsive-steps='[
+              {"minWidth": 0, "columns": 1},
+              {"minWidth": "600px", "columns": 3}
+            ]'>
+              <vaadin-text-field id="statistics_error_def" label="N total written frames" theme="small" value=[[statistics_wr_error.error_def]] readonly></vaadin-text-field>
+              <vaadin-text-field id="statistics_stack_frame" label="End time" theme="small" value=[[statistics_wr_error.stack_frame]] readonly></vaadin-text-field>
+              <vaadin-text-field id="statistics_user_msg" label="User msg" theme="small" value=[[statistics_wr_error.user_msg]] readonly></vaadin-text-field>
+            </vaadin-form-layout>
+          </page>
+          
+          <page>
+            <vaadin-form-layout id="stat_finish_id" disabled responsive-steps='[
+              {"minWidth": 0, "columns": 1},
+              {"minWidth": "600px", "columns": 2}
+            ]'>
+              <vaadin-text-field id="statistics_n_total_written_frames" label="N total written frames" theme="small" value=[[statistics_wr_finish.n_total_written_frames]] readonly></vaadin-text-field>
+              <vaadin-text-field id="statistics_end_time" label="End time" theme="small" value=[[statistics_wr_finish.end_time]] readonly></vaadin-text-field>
+            </vaadin-form-layout>
           </page>
         </iron-pages>
         </div>
@@ -170,11 +184,30 @@ class StatsConfig extends connect(store)(PolymerElement) {
     this.statistics_wr_finish = state.app.statistics_wr_finish;
     this.statistics_wr_error = state.app.statistics_wr_error;
     this.statistics_wr_adv = state.app.statistics_wr_adv;
+    this.status_config = state.app.status_config;
     this.newDataReceived = true;
+    var errorTab = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#stats_accordion > vaadin-vertical-layout > stats-config").shadowRoot.querySelector("#writer_error_tab_title");
+    var finishTab = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#stats_accordion > vaadin-vertical-layout > stats-config").shadowRoot.querySelector("#writer_finish_tab_title");
+    if (this.statistics_wr_error.enable == false){
+      errorTab.setAttribute("disabled", "disabled");
+    } else {
+      errorTab.removeAttribute("disabled");
+    }
+    if (this.statistics_wr_finish.enable == false){
+      finishTab.setAttribute("disabled", "disabled");
+    } else {
+      finishTab.removeAttribute("disabled");
+    }
+    if (this.status_config.status == "IntegrationStatus.RUNNING"){
+      const diaConfig = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#config_accordion > vaadin-vertical-layout > dia-config");
+      diaConfig.setProgressBarValue(this.statistics_wr_adv.n_written_frames / this.statistics_wr_start.n_frames);
+    }
+
   }
 
   ready(){
     super.ready()
+    
   }
 
   startStatisticsWorker() {
@@ -190,7 +223,7 @@ class StatsConfig extends connect(store)(PolymerElement) {
     }
   };
 
-  stopStatisticsWorker() { 
+  stopStatisticsWorker() {
     this.w.terminate();
     this.w = undefined;
   };
