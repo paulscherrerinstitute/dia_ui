@@ -1,6 +1,7 @@
 from copy import copy
 from logging import getLogger
-
+from time import sleep, gmtime, strftime
+from random import randint
 from detector_integration_api import default_validator
 from detector_integration_api.common.client_disable_wrapper import ClientDisableWrapper
 from detector_integration_api.default_validator import IntegrationStatus
@@ -33,10 +34,22 @@ class IntegrationManager(object):
 
         self.backend_client.open()
         self.writer_client.start()
-        self.detector_client.start()
-        
+        self.detector_client.start()     
 
-        
+        writerStartJson = {"statistics_wr_start": {
+            "first_frame_id": randint(0, 9),
+            "n_frames": 100,
+            "output_file": "tmp/file_name",
+            "user_id": randint(10000, 999999),
+            "enable": "true",
+            "timestamp": strftime("%Y-%m-%d %H:%M:%S", gmtime()),
+            "compression_method": "comp_name"}
+            }
+
+        _logger.info("SAVING START JSON...")
+        self.statisticsMonitor.set_statisticsStart(writerStartJson)
+
+
 
         # We need the status FINISHED for very short acquisitions.
         return check_for_target_status(self.get_acquisition_status,
@@ -59,9 +72,16 @@ class IntegrationManager(object):
         status = default_validator.interpret_status(self.get_status_details())
         return status
 
+    def get_statisticsStart(self):
+        statistics = self.statisticsMonitor.get_statisticsStart()
+        return statistics
+
     def get_statistics(self, status):
         statistics = self.statisticsMonitor.get_statistics(status)
         return statistics
+
+    def clear_buffers(self):
+        self.statisticsMonitor.clear_buffers()
 
     def get_acquisition_status_string(self):
         return str(self.get_acquisition_status())
@@ -209,8 +229,8 @@ class IntegrationManager(object):
     def get_metrics(self):
         # Always return a copy - we do not want this to be updated.
         return {"writer": self.writer_client.get_statistics(),
-                "backend": self.backend_client.get_metrics(),
-                "detector": {}}
+                "backend": self.backend_client.get_statistics(),
+                "detector": self.detector_client.get_statistics()}
 
     def test_daq(self, test_configuration):
         return test_configuration

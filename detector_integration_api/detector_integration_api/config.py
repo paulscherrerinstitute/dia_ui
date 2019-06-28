@@ -8,6 +8,9 @@ DEFAULT_BSREAD_URL = "http://localhost:8085"
 DEFAULT_WRITER_INSTANCE_NAME = "writer"
 DEFAULT_BSREAD_INSTANCE_NAME = "bsread"
 
+DEFAULT_STATISTICS_HOST = "127.0.0.1"
+DEFAULT_STATISTICS_PORT = "8088"
+
 BACKEND_URL_SUFFIX = "/v1"
 BACKEND_COMMUNICATION_TIMEOUT = 20
 
@@ -59,6 +62,10 @@ ROUTES = {
     "clients_enabled": "/api/v1/enabled_clients",
 
     "get_statistics": "/api/v1/get_statistics",
+
+    "get_statisticsStart": "/api/v1/get_statisticsStart",
+    
+    "clear_statistics_buffers": "/api/v1/clear_buffers",
 
     "daq_test": "/api/v1/daq_test"
 

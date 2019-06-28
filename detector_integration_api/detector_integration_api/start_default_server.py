@@ -21,7 +21,7 @@ def start_integration_server(host, port):
     writer_client = MockExternalProcessClient()
     detector_client = MockDetectorClient()
 
-    stat_obj = StatisticsMonitor("127.0.0.1", "5555", 20)
+    stat_obj = StatisticsMonitor(host=config.DEFAULT_STATISTICS_HOST, port=config.DEFAULT_STATISTICS_PORT)
     stat_obj.start_monitor()
 
     integration_manager = manager.IntegrationManager(writer_client=writer_client,

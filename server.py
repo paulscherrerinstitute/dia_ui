@@ -116,8 +116,10 @@ def stop_from_client(json, methods=['GET', 'POST']):
         # emits finished request
         socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
 
+
 @socketio.on('emitStartDiaService')
 def start_dia_script(json, methods=['GET', 'POST']):
+    print("\n\n\n\n\nDEMONHO\n\n\n\n\n")
     try:
         # starts dia service
         #os.system("systemctl start dia.service")
@@ -237,6 +239,52 @@ def get_diaConfig(json, methods=['GET', 'POST']):
         # emits finished request
         socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
     
+
+@socketio.on('emitClearStatisticsBuffer')
+def clearStatisticsBuffer(json, methods=['GET', 'POST']):
+    # gets address value from the detector api of interest
+    api_det_address = json['det_api_address']
+    # created the detector integration client object with the address of interest
+    client = DetectorIntegrationClient(api_det_address)
+    try:
+        json = client.clear_statistics_buffer()
+        print(json, "testeeee \n\n\n\n\n")
+    except Exception as e:
+        # emits problem
+        socketio.emit('problemWithRequest', {'status':'{0}'.format(e)})
+        # emits finished request
+        socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
+    else: 
+        # emits finished request
+        socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
+
+@socketio.on('emitGetStatisticsStart')
+def get_StatisticsStart(json, methods=['GET', 'POST']):
+    # gets address value from the detector api of interest
+    api_det_address = json['det_api_address']
+    # created the detector integration client object with the address of interest
+    client = DetectorIntegrationClient(api_det_address)
+    # get configuration from server  
+    try:
+        jsonStats = client.get_statisticsStart()
+        print(jsonStats)
+    except Exception as e:
+        # emits problem
+        socketio.emit('problemWithRequest', {'status':'{0}'.format(e)})
+        # emits finished request
+        socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
+    else:
+        if jsonStats['statistics'] != None:
+            idStats = jsonStats['statistics']
+            # checks for the group 
+            if "statistics_wr_start" in idStats:
+                # emits writer start configuration
+                socketio.emit('newStatisticsWriterStart', idStats['statistics_wr_start'])
+                # emits finished request
+                socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
+            else: 
+                socketio.emit('problemWithRequest', {'status':'Problem with statistics json request.'})
+
 @socketio.on('emitGetStatistics')
 def get_Statistics(json, methods=['GET', 'POST']):
     # gets address value from the detector api of interest

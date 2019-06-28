@@ -94,7 +94,7 @@ class StatsAdvHigh extends connect(store)(PolymerElement) {
                     seriesWrittingRate.addPoint([x, y], true, true);
                     self.newDataReceived = false;
                   }
-                  }, 1000);
+                  }, 500);
               }
           }
       },
@@ -135,7 +135,6 @@ class StatsAdvHigh extends connect(store)(PolymerElement) {
 
       xAxis: {
           type: 'datetime',
-          crosshair: true,
           tickPixelInterval: 150
       },
       yAxis: [{// Primary yAxis
@@ -174,8 +173,13 @@ class StatsAdvHigh extends connect(store)(PolymerElement) {
           crosshairs: true
       },
       legend: {
+        layout: 'vertical',
         align: 'left',
+        x: 60,
         verticalAlign: 'top',
+        y: 30,
+        floating: true,
+        backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || 'rgba(255,255,255,0.25)'
     },
       series: [{
           name: 'Received frame',

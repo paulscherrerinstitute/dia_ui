@@ -66,9 +66,25 @@ class DetectorIntegrationClient(object):
         return validate_response(response)
 
 
+    def get_statisticsStart(self):
+        
+        request_url = self.api_address + ROUTES["get_statisticsStart"]
+
+        response = requests.get(request_url).json()
+
+        return validate_response(response)
+
     def get_statistics(self):
         
         request_url = self.api_address + ROUTES["get_statistics"]
+
+        response = requests.get(request_url).json()
+
+        return validate_response(response)
+
+    def clear_statistics_buffer(self):
+        
+        request_url = self.api_address + ROUTES["clear_statistics_buffers"]
 
         response = requests.get(request_url).json()
 

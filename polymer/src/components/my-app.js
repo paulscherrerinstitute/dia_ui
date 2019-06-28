@@ -86,7 +86,6 @@ class MyApp extends connect(store)(PolymerElement) {
         <app-drawer id="drawer" slot="drawer" swipe-open="[[narrow]]">
           <app-toolbar>Menu</app-toolbar>
           <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-            <!--a name="view1" href="[[rootPath]]view1">View One</a-->
             
             <a id="DiaConfig" name="config" href="[[rootPath]]config">DIA configuration</a>
             <!--a id="DetectorScan" name="view2" href="[[rootPath]]view2">Bsread stream</a-->
@@ -106,8 +105,6 @@ class MyApp extends connect(store)(PolymerElement) {
           </app-header>
 
           <iron-pages selected="[[page]]" attr-for-selected="name" role="main">
-            <my-view1 name="view1"></my-view1>
-            <!--my-view2 name="view2"></my-view2-->
             <config-view name="config"></config-view>
             <log-view name="logView"></log-view>
             <my-view404 name="view404"></my-view404>
@@ -147,7 +144,7 @@ class MyApp extends connect(store)(PolymerElement) {
      // Show 'view1' in that case. And if the page doesn't exist, show 'view404'.
     if (!page) {
       this.page = 'config';
-    } else if (['view1', 'config', 'logView'].indexOf(page) !== -1) {
+    } else if (['config', 'logView'].indexOf(page) !== -1) {
       this.page = page;
     } else {
       this.page = 'view404';
@@ -175,6 +172,8 @@ class MyApp extends connect(store)(PolymerElement) {
 
     socket.on('newStatisticsWriterStart', function(msg) {
       store.dispatch({type:'UPDATE_STATISTICS_WRITER_START', payload:msg});
+      const configView = document.querySelector('body > my-app').shadowRoot.querySelector('app-drawer-layout > app-header-layout > iron-pages > config-view')
+      configView.newStatisticsStart();
     });
 
     socket.on('newStatisticsWriterFinish', function(msg) {
@@ -218,11 +217,7 @@ class MyApp extends connect(store)(PolymerElement) {
       if (msg['status']==='ok'){
         document.querySelector('my-app').hideProgressBar();
       }
-
     })
-
-    
-
   }
 
   stateReceiver(state){
@@ -256,9 +251,6 @@ class MyApp extends connect(store)(PolymerElement) {
     // Note: `polymer build` doesn't like string concatenation in the import
     // statement, so break it up.
     switch (page) {
-      case 'view1':
-        import('./my-view1.js');
-        break;
       case 'config':
         import('./config-view.js');
         break;
@@ -270,7 +262,6 @@ class MyApp extends connect(store)(PolymerElement) {
         break;
     }
   }
-
 }
 
 window.customElements.define('my-app', MyApp);

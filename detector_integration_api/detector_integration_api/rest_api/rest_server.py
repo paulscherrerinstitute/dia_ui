@@ -82,6 +82,24 @@ def register_rest_interface(app, integration_manager):
                 "status": integration_manager.get_acquisition_status_string(),
                 "statistics":jsonStats}
 
+
+    @app.get(ROUTES["get_statisticsStart"])
+    def get_statisticsStart():
+        # json stats
+        jsonStats = integration_manager.get_statisticsStart()
+
+        return{"state": "ok",
+                "status": integration_manager.get_acquisition_status_string(),
+                "statistics":jsonStats}                
+
+    @app.get(ROUTES["clear_statistics_buffers"])
+    def clearStatisticsBuffer():
+        # json stats
+        jsonStats = integration_manager.clear_buffers()
+
+        return{"state": "ok",
+                "status": integration_manager.get_acquisition_status_string()}
+
     @app.put(ROUTES["set_config"])
     def set_config():
         new_config = request.json

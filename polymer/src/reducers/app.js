@@ -11,6 +11,7 @@ const initialState = {
         "n_frames": 0,
         "output_file": "---",
         "user_id": 0,
+        "enable": false,
         "timestamp": "----",
         "compression_method": "---"
     },
@@ -29,6 +30,7 @@ const initialState = {
         "n_written_frames": 0,
         "n_received_frames": 0,
         "n_free_slots": 0,
+        "enable": false,
         "processing_rate": 0,
         "receiving_rate": 0,
         "writting_rate": 0,

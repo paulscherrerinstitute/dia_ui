@@ -35,7 +35,6 @@ class ConfigView extends connect(store)(PolymerElement) {
       <style include="shared-styles">
         :host {
           display: block;
-
           padding: 10px;
         }
 
@@ -51,18 +50,22 @@ class ConfigView extends connect(store)(PolymerElement) {
         .columnLeft {
             float: left;
             padding: 10px;
+            width: 25%;
           }
         .columnRight {
             float: left;
             padding: 10px;
+            width: 65%;
           }
  
         @media screen and (max-width: 930px) {
           .columnRight {
             width: 100%;
+            padding: 10px;
           }
           .columnLeft {
             width: 100%;
+            padding: 10px;
           }
         }
 
@@ -86,7 +89,7 @@ class ConfigView extends connect(store)(PolymerElement) {
           <paper-tooltip for="det_api_field" position="bottom" animation-delay="0">Address of the DIA interface</paper-tooltip>
         </div>
         <div class="columnRight">
-        <div class="vaadin-text-field-container" style="padding-top: var(--lumo-space-m);align-self: flex-start;color: var(--lumo-secondary-text-color);font-weight: 500;font-size: var(--lumo-font-size-s);margin-left: calc(var(--lumo-border-radius-m) / 4);transition: color 0.2s;line-height: 1;padding-bottom: 0.5em;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;position: relative; width: 100%;box-sizing: border-box;">
+        <div class="vaadin-text-field-container" style="padding-top: var(--lumo-space-m);align-self: flex-start;color: var(--lumo-secondary-text-color);font-size: var(--lumo-font-size-s);margin-left: calc(var(--lumo-border-radius-m) / 4);transition: color 0.2s;line-height: 1;padding-bottom: 0.25em;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;position: relative; width: 100%;box-sizing: border-box;">
                 <vaadin-horizontal-layout size-full :expand>
                     <label part="label" id="vaadin-text-field-label-1">Control panel</label>
                     <vaadin-progress-bar hidden id="progressBar" indeterminate value="0" style="float:right;margin-right: calc(var(--lumo-border-radius-m) / 4);max-width: 65%;"></vaadin-progress-bar>
@@ -161,7 +164,7 @@ class ConfigView extends connect(store)(PolymerElement) {
   } 
 
   ready(){
-    super.ready()
+    super.ready();
     this.loaded_config = false;
     const notification = this.$.notify;
     // requests configuration from server
@@ -190,168 +193,214 @@ class ConfigView extends connect(store)(PolymerElement) {
       
     });
 
+    // puts focus on the input field
+    this.$.det_api_field.focus()
+
+    // enter pressed while input field was focused -> loads config
+    this.$.det_api_field.addEventListener('keypress', function (e) {
+      if (e.keyCode == 13) {
+        configView.loadsConfigurationFromDIA(notification, configView, socket);
+      }
+  });
+
 
     // load button clicked
     this.$.loadConfigButton.addEventListener('click', function() {
-      notification.open();
-      configView.loaded_config = true;
-      configView.det_api_address = configView.$.det_api_field.value;
-      
-      socket.emit('emitLoad', {'det_api_address': configView.det_api_address});
-      // presents the configuration
-      configView.$.config_accordion.removeAttribute("disabled");
-      // enables the statistics accordion
-      configView.$.stats_accordion.removeAttribute("disabled");
-      // IF Successfull, starts the statistics worker 
-      const statsConfig = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#stats_accordion > vaadin-vertical-layout > stats-config")
-      statsConfig.startStatisticsWorker()
-      // disable the load button
-      this.setAttribute("disabled", "disabled");
-
-      // enables the other buttons
-      configView.$.startConfigButton.removeAttribute("disabled");
-      configView.$.editConfigButton.removeAttribute("disabled");
-      configView.$.stopConfigButton.removeAttribute("disabled");
-      configView.$.resetConfigButton.removeAttribute("disabled");
-      // view3.$.submitConfigButton.removeAttribute("disabled");
-      // disable edit fields
-      configView.shadowRoot.querySelector('#config_accordion > vaadin-vertical-layout > dia-config').disableEditField();
-
-      // enables the progress bar
-      configView.$.progressBar.removeAttribute("hidden");
-      // updates the notification text
-      notification.renderer = function(root) {
-        root.textContent = 'Loading configuration from server '+ configView.$.det_api_field.value +'.';
-      };
-      document.querySelector('body > my-app').shadowRoot.querySelector('app-drawer-layout > app-header-layout > iron-pages > config-view').shadowRoot.querySelector('#config_accordion').setAttribute("opened", "opened")
-      
+      configView.loadsConfigurationFromDIA(notification, configView, socket);
     });
 
 
 
     // edit button
     this.$.editConfigButton.addEventListener('click', function() {
-      notification.open();
-      if (configView.loaded_config === true){
-        // enables the progress bar
-        configView.$.progressBar.removeAttribute("hidden");
-        // enable editting on the fields inside configuration accordion
-        configView.shadowRoot.querySelector('#config_accordion > vaadin-vertical-layout > dia-config').enableEditField();
-        // disables the other buttons and input field
-        // view3.$.det_api_field.setAttribute("disabled", "disabled");
-        configView.$.loadConfigButton.setAttribute("disabled", "disabled");
-        configView.$.startConfigButton.setAttribute("disabled", "disabled");
-        configView.$.editConfigButton.setAttribute("disabled", "disabled");
-        configView.$.stopConfigButton.setAttribute("disabled", "disabled");
-        configView.$.resetConfigButton.setAttribute("disabled", "disabled");
-        // enables submit button
-        configView.$.submitConfigButton.removeAttribute("disabled");
-        configView.$.progressBar.setAttribute("hidden", "hidden");
-      }
-      
-      notification.renderer = function(root) {
-        root.textContent = 'Editing configuration from server '+ configView.$.det_api_field.value +'.';
-      };
+      configView.editsConfigurationFromDIA(notification, configView, socket);
     });
 
     // start button
     this.$.startConfigButton.addEventListener('click', function() {
-      notification.open();
-      if (configView.loaded_config === true){
-        socket.emit('emitStart', {'det_api_address': configView.det_api_address});
-      }
-      // disable edit fields
-      configView.shadowRoot.querySelector('#config_accordion > vaadin-vertical-layout > dia-config').disableEditField();
-      // disable start button
-      configView.$.startConfigButton.setAttribute("disabled", "disabled");
-      // enables stats accordion
-      configView.$.stats_accordion.removeAttribute("disabled");
-      // enables stop button
-      configView.$.stopConfigButton.removeAttribute("disabled");
-      notification.renderer = function(root) {
-        root.textContent = 'Starting server '+ configView.$.det_api_field.value +'.';
-      };
-      // enables the progress bar
-      configView.$.progressBar.removeAttribute("hidden");
+      configView.startConfigButtonDia(notification, configView, socket);
     });
 
     // reset button
     this.$.resetConfigButton.addEventListener('click', function() {
-      notification.open();
-      if (configView.loaded_config === true){
-        socket.emit('emitReset', {'det_api_address': configView.det_api_address});
-      }
-      // disable edit fields
-      configView.shadowRoot.querySelector('#config_accordion > vaadin-vertical-layout > dia-config').disableEditField();
-      // enable start button
-      configView.$.startConfigButton.removeAttribute("disabled");
-      // disable stop button
-      configView.$.stopConfigButton.setAttribute("disabled", "disabled");
-      notification.renderer = function(root) {
-        root.textContent = 'Resetting server '+ configView.$.det_api_field.value +'.';
-      };
-      // enables the progress bar
-      configView.$.progressBar.removeAttribute("hidden");
-      // stops the stats monitor
-      const statsConfig = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#stats_accordion > vaadin-vertical-layout > stats-config")
-      statsConfig.stopStatisticsWorker();
+      configView.resetConfigButtonDia(notification, configView, socket);
     });
 
     // stop button
     this.$.stopConfigButton.addEventListener('click', function() {
-      notification.open();
-      if (configView.loaded_config === true){
-        socket.emit('emitStop', {'det_api_address': configView.det_api_address});
-      }
-      // closes stat accordion
-      configView.$.stats_accordion.removeAttribute("opened");
-      // disable edit fields
-      configView.shadowRoot.querySelector('#config_accordion > vaadin-vertical-layout > dia-config').disableEditField();
-      // disable stop button
-      configView.$.stopConfigButton.setAttribute("disabled", "disabled");
-      // enable start button
-      configView.$.startConfigButton.removeAttribute("disabled");
-      // disable the statistics accordion
-      configView.$.stats_accordion.setAttribute("disabled", "disabled");
-      notification.renderer = function(root) {
-        root.textContent = 'Stopping server '+ configView.$.det_api_field.value +'.';
-      };
-      // enables the progress bar
-      configView.$.progressBar.removeAttribute("hidden");
-
-      // stops the stats monitor
-      const statsConfig = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#stats_accordion > vaadin-vertical-layout > stats-config")
-      statsConfig.stopStatisticsWorker();
-
+      configView.stopConfigButtonDia(notification, configView, socket);
     });
 
     // submit button clicked
     this.$.submitConfigButton.addEventListener('click', function() {
-      notification.open();
-      // gets configuration from input fields and saves them
-      this.writer_config = configView.shadowRoot.querySelector('#config_accordion > vaadin-vertical-layout > dia-config').getWriterConfig()
-      this.backend_config = configView.shadowRoot.querySelector('#config_accordion > vaadin-vertical-layout > dia-config').getBackendConfig()
-      this.detector_config = configView.shadowRoot.querySelector('#config_accordion > vaadin-vertical-layout > dia-config').getDetectorConfig()
-      // creates the json to submit to the server 
-      const submitJson = {'det_api_address': configView.det_api_address,'configuration': {'writer': this.writer_config,
-                 'backend': this.backend_config,
-                 'detector': this.detector_config}};
+      configView.submitConfigButtonDia(notification, configView, socket);
+    });
+  }
 
-      socket.emit('newConfigurationFromClient', submitJson);
-      // adjusts the buttons
-      configView.$.startConfigButton.removeAttribute("disabled");
-      configView.$.resetConfigButton.removeAttribute("disabled");
-      configView.$.editConfigButton.removeAttribute("disabled");
-      configView.$.stopConfigButton.removeAttribute("disabled");
-      configView.$.submitConfigButton.setAttribute("disabled", "disabled");
-      // adjusts the text fields
-      configView.shadowRoot.querySelector('#config_accordion > vaadin-vertical-layout > dia-config').disableEditField();
-      notification.renderer = function(root) {
-        root.textContent = 'Submitting configuration to server '+ configView.$.det_api_field.value +'.';
-      }; 
+  submitConfigButtonDia(notification, configView, socket){
+    notification.open();
+    // gets configuration from input fields and saves them
+    this.writer_config = configView.shadowRoot.querySelector('#config_accordion > vaadin-vertical-layout > dia-config').getWriterConfig()
+    this.backend_config = configView.shadowRoot.querySelector('#config_accordion > vaadin-vertical-layout > dia-config').getBackendConfig()
+    this.detector_config = configView.shadowRoot.querySelector('#config_accordion > vaadin-vertical-layout > dia-config').getDetectorConfig()
+    // creates the json to submit to the server 
+    const submitJson = {'det_api_address': configView.det_api_address,'configuration': {'writer': this.writer_config,
+               'backend': this.backend_config,
+               'detector': this.detector_config}};
+
+    socket.emit('newConfigurationFromClient', submitJson);
+    // adjusts the buttons
+    configView.$.startConfigButton.removeAttribute("disabled");
+    configView.$.resetConfigButton.removeAttribute("disabled");
+    configView.$.editConfigButton.removeAttribute("disabled");
+    configView.$.stopConfigButton.removeAttribute("disabled");
+    configView.$.submitConfigButton.setAttribute("disabled", "disabled");
+    // adjusts the text fields
+    configView.shadowRoot.querySelector('#config_accordion > vaadin-vertical-layout > dia-config').disableEditField();
+    notification.renderer = function(root) {
+      root.textContent = 'Submitting configuration to server '+ configView.$.det_api_field.value +'.';
+    }; 
+    // enables the progress bar
+    configView.$.progressBar.removeAttribute("hidden");
+  }
+
+  resetConfigButtonDia(notification, configView, socket){
+    configView.disableStatsWriterTabs();
+    notification.open();
+    if (configView.loaded_config === true){
+      socket.emit('emitReset', {'det_api_address': configView.det_api_address});
+    }
+    // disable edit fields
+    configView.shadowRoot.querySelector('#config_accordion > vaadin-vertical-layout > dia-config').disableEditField();
+    // enable start button
+    configView.$.startConfigButton.removeAttribute("disabled");
+    // disable stop button
+    configView.$.stopConfigButton.setAttribute("disabled", "disabled");
+    notification.renderer = function(root) {
+      root.textContent = 'Resetting server '+ configView.$.det_api_field.value +'.';
+    };
+    // closes stat accordion
+    configView.$.stats_accordion.removeAttribute("opened");
+    // disable the statistics accordion
+    configView.$.stats_accordion.setAttribute("disabled", "disabled");
+    // enables the progress bar
+    configView.$.progressBar.removeAttribute("hidden");
+    // stops the stats monitor
+    const statsConfig = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#stats_accordion > vaadin-vertical-layout > stats-config")
+    statsConfig.stopStatisticsWorker();
+  }
+
+  stopConfigButtonDia(notification, configView, socket){
+    notification.open();
+    if (configView.loaded_config === true){
+      socket.emit('emitStop', {'det_api_address': configView.det_api_address});
+    }
+    // closes stat accordion
+    configView.$.stats_accordion.removeAttribute("opened");
+    // disable edit fields
+    configView.shadowRoot.querySelector('#config_accordion > vaadin-vertical-layout > dia-config').disableEditField();
+    // disable stop button
+    configView.$.stopConfigButton.setAttribute("disabled", "disabled");
+    // enable start button
+    configView.$.startConfigButton.removeAttribute("disabled");
+    // disable the statistics accordion
+    configView.$.stats_accordion.setAttribute("disabled", "disabled");
+    notification.renderer = function(root) {
+      root.textContent = 'Stopping server '+ configView.$.det_api_field.value +'.';
+    };
+    // enables the progress bar
+    configView.$.progressBar.removeAttribute("hidden");
+
+    // stops the stats monitor
+    const statsConfig = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#stats_accordion > vaadin-vertical-layout > stats-config")
+    statsConfig.stopStatisticsWorker();
+  };
+
+  startConfigButtonDia(notification, configView, socket){
+    // stops the stats monitor
+    const statsConfig = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#stats_accordion > vaadin-vertical-layout > stats-config");
+    statsConfig.stopStatisticsWorker();
+    notification.open();
+    if (configView.loaded_config === true){
+      socket.emit('emitStart', {'det_api_address': configView.det_api_address});
+    }
+    // disable edit fields
+    configView.shadowRoot.querySelector('#config_accordion > vaadin-vertical-layout > dia-config').disableEditField();
+    // disable start button
+    configView.$.startConfigButton.setAttribute("disabled", "disabled");
+    // enables stats accordion
+    configView.$.stats_accordion.removeAttribute("disabled");
+    // enables stop button
+    configView.$.stopConfigButton.removeAttribute("disabled");
+    notification.renderer = function(root) {
+      root.textContent = 'Starting server '+ configView.$.det_api_field.value +'.';
+    };
+    // start the statistics worker
+    statsConfig.startStatisticsWorker();
+
+    // enables the progress bar
+    configView.$.progressBar.removeAttribute("hidden");
+  }
+
+  loadsConfigurationFromDIA(notification, configView, socket){
+    // stops the stats monitor
+    const statsConfig = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#stats_accordion > vaadin-vertical-layout > stats-config");
+    statsConfig.stopStatisticsWorker();
+    notification.open();
+    configView.loaded_config = true;
+    configView.det_api_address = configView.$.det_api_field.value;
+    
+    socket.emit('emitLoad', {'det_api_address': configView.det_api_address});
+    // presents the configuration
+    configView.$.config_accordion.removeAttribute("disabled");
+    // enables the statistics accordion
+    configView.$.stats_accordion.removeAttribute("disabled");
+
+
+    // start the statistics worker
+    statsConfig.startStatisticsWorker();
+    // disable the load button
+    configView.$.loadConfigButton.setAttribute("disabled", "disabled");
+
+    // enables the other buttons
+    configView.$.startConfigButton.removeAttribute("disabled");
+    configView.$.editConfigButton.removeAttribute("disabled");
+    configView.$.stopConfigButton.removeAttribute("disabled");
+    configView.$.resetConfigButton.removeAttribute("disabled");
+    // disable edit fields
+    configView.shadowRoot.querySelector('#config_accordion > vaadin-vertical-layout > dia-config').disableEditField();
+
+    // enables the progress bar
+    configView.$.progressBar.removeAttribute("hidden");
+    // updates the notification text
+    notification.renderer = function(root) {
+      root.textContent = 'Loading configuration from server '+ configView.$.det_api_field.value +'.';
+    };
+    document.querySelector('body > my-app').shadowRoot.querySelector('app-drawer-layout > app-header-layout > iron-pages > config-view').shadowRoot.querySelector('#config_accordion').setAttribute("opened", "opened");
+  }
+
+  editsConfigurationFromDIA(notification, configView, socket){
+    notification.open();
+    if (configView.loaded_config === true){
       // enables the progress bar
       configView.$.progressBar.removeAttribute("hidden");
-    });
+      // enable editting on the fields inside configuration accordion
+      configView.shadowRoot.querySelector('#config_accordion > vaadin-vertical-layout > dia-config').enableEditField();
+      // disables the other buttons and input field
+      // view3.$.det_api_field.setAttribute("disabled", "disabled");
+      configView.$.loadConfigButton.setAttribute("disabled", "disabled");
+      configView.$.startConfigButton.setAttribute("disabled", "disabled");
+      configView.$.editConfigButton.setAttribute("disabled", "disabled");
+      configView.$.stopConfigButton.setAttribute("disabled", "disabled");
+      configView.$.resetConfigButton.setAttribute("disabled", "disabled");
+      // enables submit button
+      configView.$.submitConfigButton.removeAttribute("disabled");
+      configView.$.progressBar.setAttribute("hidden", "hidden");
+    }
+    
+    notification.renderer = function(root) {
+      root.textContent = 'Editing configuration from server '+ configView.$.det_api_field.value +'.';
+    };
   }
 
   updateControlPanelButtons(){
@@ -374,6 +423,18 @@ class ConfigView extends connect(store)(PolymerElement) {
     this.$.progressBar.setAttribute("hidden", "hidden");
   }
 
+  disableStatsWriterTabs(){
+    // disables previous error or finish tabs
+    var errorTab = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#stats_accordion > vaadin-vertical-layout > stats-config").shadowRoot.querySelector("#writer_error_tab_title");
+    errorTab.setAttribute("disabled", "disabled");
+    var finishTab = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#stats_accordion > vaadin-vertical-layout > stats-config").shadowRoot.querySelector("#writer_finish_tab_title");
+    finishTab.setAttribute("disabled", "disabled");
+    var advTab = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#stats_accordion > vaadin-vertical-layout > stats-config").shadowRoot.querySelector("#writer_adv_tab_title");
+    advTab.setAttribute("disabled", "disabled");
+    var startTab = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#stats_accordion > vaadin-vertical-layout > stats-config").shadowRoot.querySelector("#writer_start_tab_title");
+    startTab.setAttribute("disabled", "disabled");
+  }
+
   updateStartButton(status){
   const configView = document.querySelector('body > my-app').shadowRoot.querySelector('app-drawer-layout > app-header-layout > iron-pages > config-view')
   if (status != "IntegrationStatus.RUNNING" && this.loaded_config == true) {
@@ -389,7 +450,17 @@ class ConfigView extends connect(store)(PolymerElement) {
     this.backend_config = state.app.backend_config;
     this.problemLoadingConfig = state.app.problemLoadingConfig;
     this.status_config = state.app.status_config;
+    this.statistics_wr_finish = state.app.statistics_wr_finish;
+    this.statistics_wr_error = state.app.statistics_wr_error;
   };
+
+  newStatisticsStart(){
+    this.statistics_wr_error.enable = false;
+    this.statistics_wr_finish.enable = false;
+    // removes progress bar color
+    const progressBar = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#config_accordion > vaadin-vertical-layout > dia-config").shadowRoot.querySelector("#progress-bar-custom-bounds");
+    progressBar.removeAttribute("theme");
+  }
 
   problemStartRequest(msg){
   customElements.whenDefined('vaadin-dialog').then(function() {
@@ -401,13 +472,14 @@ class ConfigView extends connect(store)(PolymerElement) {
       }
       const div = window.document.createElement('div');
       div.textContent = msg['status'];
+      const configView = document.querySelector('body > my-app').shadowRoot.querySelector('app-drawer-layout > app-header-layout > iron-pages > config-view');
 
       // if connection was not made, stop statistics and disables config/statistics
       if (div.textContent.includes("Failed to establish a new connection")){
         // stops the stats monitor
         const statsConfig = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#stats_accordion > vaadin-vertical-layout > stats-config");
         statsConfig.stopStatisticsWorker();
-        const configView = document.querySelector('body > my-app').shadowRoot.querySelector('app-drawer-layout > app-header-layout > iron-pages > config-view');
+  
         // closes accordions
         configView.$.config_accordion.removeAttribute("opened");
         configView.$.stats_accordion.removeAttribute("opened");
@@ -433,9 +505,23 @@ class ConfigView extends connect(store)(PolymerElement) {
       okButton.addEventListener('click', function() {
         dialog.opened = false;
       });
+      const startServiceButton = window.document.createElement('vaadin-button');
+      startServiceButton.setAttribute('theme', 'primary');
+      startServiceButton.textContent = 'Start DIA service';
+      startServiceButton.setAttribute('style', 'margin-right: 1em');
+      startServiceButton.addEventListener('click', function() {
+        // emits the signal to start the DIA service on desired host machine
+        const submitJson = {'det_api_address': configView.det_api_address};
+        // connects to the socket to request the start of the dia service
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+        socket.emit('emitStartDiaService', submitJson);
+        // closes the dialog message
+        dialog.opened = false;
+      });
 
       root.appendChild(div);
       root.appendChild(br);
+      root.appendChild(startServiceButton);
       root.appendChild(okButton);
     };
     dialog.opened = true;

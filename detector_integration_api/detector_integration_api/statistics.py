@@ -10,66 +10,70 @@ import threading
 from collections import deque
 
 import zmq, json
+from time import sleep
 
 _logger = getLogger(__name__)
-buffer = deque(maxlen=20)
-lock = threading.Lock()
+buffer = deque(maxlen=1000)
 
 # Class to receive each message and add it to the global buffer
 class MessagesMonitorThread(threading.Thread):
 
-    def __init__(self, socket, buffer):
+    def __init__(self, logger, socket, buffer,):
         threading.Thread.__init__(self)
         self._socket = socket
         self._buffer= buffer
+        self._logger = logger
 
     def run(self):
         while True:
-            #  Wait for next request from client
-            message = self._socket.recv_json()
-            # adds the message to the buffer
-            self._buffer.append(message)
+            #  Wait for next msg from client
+            topic = self._socket.recv_string()
+            frame = self._socket.recv_json()
+            self._buffer.append(frame)
+
+            
 
 
 class StatisticsMonitor(object):
-
-    def __init__(self, host, port, buffer_len):
+    def __init__(self, host, port):
         self._host = host
         self._port = port
-        
-        # TODO address needs to be adjusted/checked
-        self._zmq_address = "tcp://%s:%s" % (self._host, self._port)
-
+        self._startData = ""
 
     def start_monitor(self):
         _logger.info("Starting statistics monitor.")
         # zmq socket binding
         context = zmq.Context()
-        socket = context.socket(zmq.PULL)
-        socket.connect(self._zmq_address)
-        # start processing thread with global buffer
+
+        # Socket
+        socket = context.socket(zmq.SUB)
+        socket.connect("tcp://localhost:8088" )
+        socket.setsockopt(zmq.SUBSCRIBE, b'statisticsWriter')
+        socket.setsockopt(zmq.SUBSCRIBE, b'statisticsBackend')
+        socket.setsockopt(zmq.SUBSCRIBE, b'statisticsDetector')
+
+        # start processing thread with global buffer writer
         global buffer
-        thread_monitor = MessagesMonitorThread(socket, buffer)
+        thread_monitor = MessagesMonitorThread(_logger, socket, buffer)
         thread_monitor.start()
 
     def get_statistics(self, status):
-        _logger.info("Getting statistics.")
-        
-        if status != "IntegrationStatus.RUNNING":
-            raise ValueError("Cannot get statistics in %s state. Please configure first." % status)
         global buffer
-        prepared = {v: k for v, k in enumerate(buffer)}
+        if len(buffer) > 0:
+            item = buffer.popleft()
+            return item
 
-        json_stats = json.dumps(dict(prepared))
-
-        return json_stats
-    
-    def get_events():
-        _logger.info("Getting events.")
-
-    def clear_buffer():
+    def clear_buffers(self):
         _logger.info("Clearing statistics buffer.")
         global buffer
         buffer.clear()
 
+    def buffer_length(self):
+        global buffer
+        return len(buffer)
 
+    def set_statisticsStart(self, json):
+        self._startData = json
+
+    def get_statisticsStart(self):
+        return self._startData

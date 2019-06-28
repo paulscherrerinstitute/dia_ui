@@ -16,21 +16,21 @@ if status != "IntegrationStatus.READY":
     client.reset()
 
 # Define the config for the writer.
-writer_config = {"output_file": "/tmp/test.h5",
-                 "n_frames": 100,
+writer_config = {"output_file": "--",
+                 "n_frames": 0,
                  "user_id": 10001}
 
 # Define the config for the backend.
-backend_config = {"bit_depth": 16,
-                  "n_frames": 100}
+backend_config = {"bit_depth": 0,
+                  "n_frames": 0}
 
 # Define the config for the detector.
-detector_config = {"period": 0.1,
-                   "frames": 100,
-                   "exptime": 0.01,
-                   "cycles": 100,
-                   "timing": "gating",
-                   "dr": 16}
+detector_config = {"period": 0.0,
+                   "frames": 0,
+                   "exptime": 0.0,
+                   "cycles": 0,
+                   "timing": "auto",
+                   "dr": 0}
                    
 configuration = {"writer": writer_config,
                  "backend": backend_config,
