@@ -3,6 +3,7 @@ import optparse, os, sys
 from bsread import source
 from detector_integration_api import DetectorIntegrationClient
 
+from pathlib import Path
 
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
@@ -116,10 +117,26 @@ def stop_from_client(json, methods=['GET', 'POST']):
         # emits finished request
         socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
 
+@socketio.on('setDetectorConfigScript')
+def set_detector_config(json, methods=['GET', 'POST']):
+    # gets which script file to run
+    print(json)
+    print('\n\n\n\n')
+    det_model = json['detector_model']
+    try:
+        # runs the set detector config with the desired configuration model
+        os.system("sh run_detector_config.sh "+det_model)
+    except Exception as e:
+        # emits problem
+        socketio.emit('problemWithRequest', {'status':'{0}'.format(e)})
+        # emits finished request
+        socketio.emit('finishedRequestSuccessfully', {'status':'ok'})    
+    else:
+        # emits finished request
+        socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
 
 @socketio.on('emitStartDiaService')
 def start_dia_script(json, methods=['GET', 'POST']):
-    print("\n\n\n\n\nDEMONHO\n\n\n\n\n")
     try:
         # starts dia service
         #os.system("systemctl start dia.service")
@@ -131,28 +148,21 @@ def start_dia_script(json, methods=['GET', 'POST']):
         # emits finished request
         socketio.emit('finishedRequestSuccessfully', {'status':'ok'})    
     else:
-        # verifies status
-        if (status == 0): # 0 == Success
-            # Dia now running
-            api_det_address = json['det_api_address']
-            # created the detector integration client object with the address of interest
-            client = DetectorIntegrationClient(api_det_address)
-            jsonConfig = client.get_config()
-            # emits updated writer configuration
-            socketio.emit('newConfigStatus', {'state':jsonConfig['state'], 'status':jsonConfig['status']})
-            # emits updated writer configuration
-            socketio.emit('newConfigWriterData', jsonConfig['config']['writer'])
-            # emits updated detector configuration
-            socketio.emit('newConfigDetectorData', jsonConfig['config']['detector'])
-            # emits updated backend configuration
-            socketio.emit('newConfigBackendData', jsonConfig['config']['backend'])
-            # emits finished request
-            socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
-        else:
-            # emits problem
-            socketio.emit('problemWithRequest', {'status':'Something went wrong while starting DIA service, please start it manually.'})
-            # emits finished request
-            socketio.emit('finishedRequestSuccessfully', {'status':'ok'})    
+        # Dia now running
+        api_det_address = json['det_api_address']
+        # created the detector integration client object with the address of interest
+        client = DetectorIntegrationClient(api_det_address)
+        jsonConfig = client.get_config()
+        # emits updated writer configuration
+        socketio.emit('newConfigStatus', {'state':jsonConfig['state'], 'status':jsonConfig['status']})
+        # emits updated writer configuration
+        socketio.emit('newConfigWriterData', jsonConfig['config']['writer'])
+        # emits updated detector configuration
+        socketio.emit('newConfigDetectorData', jsonConfig['config']['detector'])
+        # emits updated backend configuration
+        socketio.emit('newConfigBackendData', jsonConfig['config']['backend'])
+        # emits finished request
+        socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
 
 
 
@@ -258,6 +268,20 @@ def clearStatisticsBuffer(json, methods=['GET', 'POST']):
         # emits finished request
         socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
 
+@socketio.on('requestDiaLog')
+def get_diaLog(json, methods=['GET', 'POST']):
+    dia_log_file = Path("./dia_service.log")
+    if dia_log_file.is_file():
+        diaLogContent = open(dia_log_file, 'r').read()
+        # emits writer start configuration
+        socketio.emit('sendingDiaLog', diaLogContent)
+        # emits finished request
+        socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
+    else:
+        socketio.emit('problemWithRequest', {'status':'Dia log file does not exists.'})
+        
+        
+
 @socketio.on('emitGetStatisticsStart')
 def get_StatisticsStart(json, methods=['GET', 'POST']):
     # gets address value from the detector api of interest
@@ -267,7 +291,6 @@ def get_StatisticsStart(json, methods=['GET', 'POST']):
     # get configuration from server  
     try:
         jsonStats = client.get_statisticsStart()
-        print(jsonStats)
     except Exception as e:
         # emits problem
         socketio.emit('problemWithRequest', {'status':'{0}'.format(e)})

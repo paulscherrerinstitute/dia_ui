@@ -56,7 +56,7 @@ start_detector_debug_server(){
     -e 'tell application "System Events" to tell process "iTerm" to key code 52' \
     -e 'tell application "System Events" to tell process "iTerm" to keystroke "export PYTHONPATH=`pwd`"' \
     -e 'tell application "System Events" to tell process "iTerm" to key code 52' \
-    -e 'tell application "System Events" to tell process "iTerm" to keystroke "python detector_integration_api/start_default_server.py"' \
+    -e 'tell application "System Events" to tell process "iTerm" to keystroke "python detector_integration_api/start_default_server.py > ../dia_service.log"' \
     -e 'tell application "System Events" to tell process "iTerm" to key code 52'
 }
 

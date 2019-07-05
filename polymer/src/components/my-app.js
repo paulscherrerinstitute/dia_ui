@@ -87,9 +87,8 @@ class MyApp extends connect(store)(PolymerElement) {
           <app-toolbar>Menu</app-toolbar>
           <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
             
-            <a id="DiaConfig" name="config" href="[[rootPath]]config">DIA configuration</a>
-            <!--a id="DetectorScan" name="view2" href="[[rootPath]]view2">Bsread stream</a-->
-            <!--a id="LogViewer" name="logView" href="[[rootPath]]logView">Log viewer</a-->
+            <a id="DiaConfig" name="config" href="[[rootPath]]config">Dashboard</a>
+            <a id="LogViewer" name="logView" href="[[rootPath]]logView">Log viewer</a>
           </iron-selector>
           <div id="containerHigh"></div>
         </app-drawer>
@@ -206,7 +205,11 @@ class MyApp extends connect(store)(PolymerElement) {
 
     socket.on('problemLoadingConfig', function(msg){
       store.dispatch({type:'ERROR_LOADING_CONFIG', payload:msg});
-    })
+    });
+
+    socket.on('sendingDiaLog', function(msg){
+      store.dispatch({type:'RECEIVED_DIA_LOG', payload:msg});
+    });
 
     socket.on('problemWithRequest', function(msg){
       const configView = document.querySelector('body > my-app').shadowRoot.querySelector('app-drawer-layout > app-header-layout > iron-pages > config-view')

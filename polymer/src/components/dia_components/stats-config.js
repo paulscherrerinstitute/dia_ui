@@ -194,14 +194,16 @@ class StatsConfig extends connect(store)(PolymerElement) {
     if (this.statistics_wr_start.enable == false){
       startTab.setAttribute("disabled", "disabled");
     }else{
+      // enables the start statistics tab
       startTab.removeAttribute("disabled");
     }
     // enables/disables the adv tab
     if (this.statistics_wr_adv.enable == false){
       advTab.setAttribute("disabled", "disabled");
     }else{
+      // enables the advanced statistics tab
       advTab.removeAttribute("disabled");
-      // checks if starts is empty to request previous start statistics
+      // checks if starts is empty to request previous start statistics details
       if (this.statistics_wr_start.enable == false){
         var socket = io.connect('http://' + document.domain + ':' + location.port);
         const configView = document.querySelector('body > my-app').shadowRoot.querySelector('app-drawer-layout > app-header-layout > iron-pages > config-view')

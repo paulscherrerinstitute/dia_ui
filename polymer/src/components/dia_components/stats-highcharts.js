@@ -76,6 +76,7 @@ class StatsAdvHigh extends connect(store)(PolymerElement) {
       chart: {
           type: 'spline',
           animation: Highcharts.svg, 
+          zoomType: 'x',
           marginLeft: 60,
           marginRight: 60,
           events: {
@@ -94,6 +95,14 @@ class StatsAdvHigh extends connect(store)(PolymerElement) {
                     seriesWrittingRate.addPoint([x, y], true, true);
                     self.newDataReceived = false;
                   }
+                  // removes points from series
+                  while (seriesWrittingRate.length > 49){
+                    seriesWrittingRate.data[0].remove(true);
+                  }
+                  while (seriesRecFrame.length > 49){
+                    seriesRecFrame.data[0].remove(true);
+                  }
+
                   }, 500);
               }
           }
@@ -193,7 +202,7 @@ class StatsAdvHigh extends connect(store)(PolymerElement) {
                   time = (new Date()).getTime(),
                   i;
   
-              for (i = -99; i <= 0; i += 1) {
+              for (i = -49; i <= 0; i += 1) {
                   data.push({
                       x: time + i * 1000,
                       y: 0.0
@@ -214,7 +223,7 @@ class StatsAdvHigh extends connect(store)(PolymerElement) {
                 time = (new Date()).getTime(),
                 i;
 
-            for (i = -99; i <= 0; i += 1) {
+            for (i = -49; i <= 0; i += 1) {
                 data.push({
                     x: time + i * 1000,
                     y: 0.0

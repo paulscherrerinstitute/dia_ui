@@ -19,6 +19,7 @@ import '@vaadin/vaadin-button/vaadin-button.js';
 import '@vaadin/vaadin-dialog/vaadin-dialog.js';
 import '@vaadin/vaadin-icons/vaadin-icons.js';
 import '@vaadin/vaadin-tabs/vaadin-tabs.js';
+import '@vaadin/vaadin-combo-box/vaadin-combo-box.js';
 import '@vaadin/vaadin-notification/vaadin-notification.js';
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar.js';
 import '@polymer/paper-dialog/paper-dialog.js';
@@ -32,94 +33,114 @@ import '@polymer/iron-icons/iron-icons.js';
 class ConfigView extends connect(store)(PolymerElement) {
   static get template() {
     return html`
-      <style include="shared-styles">
-        :host {
-          display: block;
-          padding: 10px;
-        }
+    <style include="shared-styles">
+    :host {
+        display: block;
+        padding: 10px;
+    }
+    
+    #det_api_field {
+        width: 100%;
+    }
+    
+    #containerContent {
+        height: 100%;
+        width: 100%;
+        display: flex;
+    }
+    
+    .columnLeft {
+        float: left;
+        padding: 2px;
+        width: 17%;
+    }
+    
+    .columnRight {
+        float: left;
+        padding: 2px;
+        width: 50%;
+    }
+    .columnRight2 {
+        float: left;
+        padding: 2px;
+        width: 30%;
+    }
 
-        #det_api_field{
-          width:100%;
-        }
-        #containerContent {
-          height: 100%;
-          width: 100%;
-          display: flex;
-        }
-
-        .columnLeft {
-            float: left;
-            padding: 10px;
-            width: 25%;
-          }
+    .small_icon {
+      --iron-icon-height: 17px;
+      --iron-icon-width: 17px;
+    }
+    
+    @media screen and (max-width: 930px) {
         .columnRight {
-            float: left;
-            padding: 10px;
-            width: 65%;
-          }
- 
-        @media screen and (max-width: 930px) {
-          .columnRight {
             width: 100%;
             padding: 10px;
-          }
-          .columnLeft {
+        }
+        .columnLeft {
             width: 100%;
             padding: 10px;
-          }
         }
+    }
+    /* Clear floats after the columns */
+    
+    .row:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+    </style>
 
-        /* Clear floats after the columns */
-        .row:after {
-          content: "";
-          display: table;
-          clear: both;
-        }
-        
-
-
-      </style>
-
-      
-      
     <div class="card">
-    <div class="row">
-        <div class="columnLeft">
-          <vaadin-text-field label="Detector API Address" value="http://0.0.0.0:10000" id="det_api_field" ></vaadin-text-field>
-          <paper-tooltip for="det_api_field" position="bottom" animation-delay="0">Address of the DIA interface</paper-tooltip>
-        </div>
-        <div class="columnRight">
-        <div class="vaadin-text-field-container" style="padding-top: var(--lumo-space-m);align-self: flex-start;color: var(--lumo-secondary-text-color);font-size: var(--lumo-font-size-s);margin-left: calc(var(--lumo-border-radius-m) / 4);transition: color 0.2s;line-height: 1;padding-bottom: 0.25em;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;position: relative; width: 100%;box-sizing: border-box;">
-                <vaadin-horizontal-layout size-full :expand>
-                    <label part="label" id="vaadin-text-field-label-1">Control panel</label>
-                    <vaadin-progress-bar hidden id="progressBar" indeterminate value="0" style="float:right;margin-right: calc(var(--lumo-border-radius-m) / 4);max-width: 65%;"></vaadin-progress-bar>
-                    <div part="error-message" aria-live="assertive" aria-hidden="true" id="vaadin-text-field-error-1"></div>
-                    <vaadin-dialog id="dialog" no-close-on-esc no-close-on-outside-click></vaadin-dialog>
+        <div class="row">
+            <div class="columnLeft">
+                <vaadin-text-field label="DIA API Address" value="http://0.0.0.0:10000" id="det_api_field"></vaadin-text-field>
+                <paper-tooltip for="det_api_field" position="bottom" animation-delay="0">Address of the DIA interface</paper-tooltip>
+            </div>
+            <div class="columnRight">
+                <div class="vaadin-text-field-container" style="padding-top: var(--lumo-space-m);align-self: flex-start;color: var(--lumo-secondary-text-color);font-size: var(--lumo-font-size-s);margin-left: calc(var(--lumo-border-radius-m) / 4);transition: color 0.2s;line-height: 1;padding-bottom: 0.25em;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;position: relative; width: 100%;box-sizing: border-box;">
+                    <vaadin-horizontal-layout size-full :expand>
+                        <label part="label" id="vaadin-text-field-label-1">DIA Control panel</label>
+                        <vaadin-progress-bar hidden id="progressBar" indeterminate value="0" style="float:right;margin-right: calc(var(--lumo-border-radius-m) / 4);max-width: 65%;"></vaadin-progress-bar>
+                        <div part="error-message" aria-live="assertive" aria-hidden="true" id="vaadin-text-field-error-1"></div>
+                        <vaadin-dialog id="dialog" no-close-on-esc no-close-on-outside-click></vaadin-dialog>
+                    </vaadin-horizontal-layout>
+                </div>
+                <vaadin-horizontal-layout id="control_panel_field">
+                    <vaadin-button id="loadConfigButton" :middle>
+                        <iron-icon class = "small_icon" icon="vaadin:download-alt"></iron-icon>Load</vaadin-button>
+                    <paper-tooltip for="loadConfigButton" position="bottom" animation-delay="0">Loads configuration from DIA address</paper-tooltip>
+                    <vaadin-button class = "small_icon" id="editConfigButton" :middle disabled>
+                        <iron-icon icon="vaadin:edit"></iron-icon>Edit</vaadin-button>
+                    <paper-tooltip for="editConfigButton" position="bottom" animation-delay="0">Enable editting the configuration values</paper-tooltip>
+                    <vaadin-button class = "small_icon" id="submitConfigButton" :middle disabled>
+                        <iron-icon icon="icons:send"></iron-icon>Submit</vaadin-button>
+                    <paper-tooltip for="submitConfigButton" position="bottom" animation-delay="0">Submits configuration the DIA address</paper-tooltip>
+                    <vaadin-button class = "small_icon" id="startConfigButton" :middle disabled>
+                        <iron-icon icon="vaadin:start-cog"></iron-icon>Start</vaadin-button>
+                    <paper-tooltip for="startConfigButton" position="bottom" animation-delay="0">Starts the DIA</paper-tooltip>
+                    <vaadin-button class = "small_icon" id="stopConfigButton" :middle disabled>
+                        <iron-icon icon="vaadin:stop-cog"></iron-icon>Stop</vaadin-button>
+                    <paper-tooltip for="stopConfigButton" position="bottom" animation-delay="0">Stop the DIA</paper-tooltip>
+                    <vaadin-button class = "small_icon" id="resetConfigButton" :middle disabled>
+                        <iron-icon icon="vaadin:refresh"></iron-icon>Reset</vaadin-button>
+                    <paper-tooltip for="resetConfigButton" position="bottom" animation-delay="0">Resets the DIA</paper-tooltip>
+                    <vaadin-notification id="notify" duration="1500" position="top-end"></vaadin-notification>
                 </vaadin-horizontal-layout>
             </div>
-            <vaadin-horizontal-layout id="control_panel_field">
-                <vaadin-button id="loadConfigButton" :middle>
-                    <iron-icon icon="vaadin:download-alt"></iron-icon>Load</vaadin-button>
-                <paper-tooltip for="loadConfigButton" position="bottom" animation-delay="0">Loads configuration from DIA address</paper-tooltip>
-                <vaadin-button id="editConfigButton" :middle disabled>
-                    <iron-icon icon="vaadin:edit"></iron-icon>Edit</vaadin-button>
-                <paper-tooltip for="editConfigButton" position="bottom" animation-delay="0">Enable editting the configuration values</paper-tooltip>
-                <vaadin-button id="submitConfigButton" :middle disabled>
-                    <iron-icon icon="icons:send"></iron-icon>Submit</vaadin-button>
-                <paper-tooltip for="submitConfigButton" position="bottom" animation-delay="0">Submits configuration the DIA address</paper-tooltip>
-                <vaadin-button id="startConfigButton" :middle disabled>
-                    <iron-icon icon="vaadin:start-cog"></iron-icon>Start</vaadin-button>
-                <paper-tooltip for="startConfigButton" position="bottom" animation-delay="0">Starts the DIA</paper-tooltip>
-                <vaadin-button id="stopConfigButton" :middle disabled>
-                    <iron-icon icon="vaadin:stop-cog"></iron-icon>Stop</vaadin-button>
-                <paper-tooltip for="stopConfigButton" position="bottom" animation-delay="0">Stop the DIA</paper-tooltip>
-                <vaadin-button id="resetConfigButton" :middle disabled>
-                    <iron-icon icon="vaadin:refresh"></iron-icon>Reset</vaadin-button>
-                <paper-tooltip for="resetConfigButton" position="bottom" animation-delay="0">Resets the DIA</paper-tooltip>
-                <vaadin-notification id="notify" duration="1500" position="top-end"></vaadin-notification>
-            </vaadin-horizontal-layout>
+            <div class="columnRight2">
+                <div class="vaadin-text-field-container" style="padding-top: var(--lumo-space-m);align-self: flex-start;color: var(--lumo-secondary-text-color);font-size: var(--lumo-font-size-s);margin-left: calc(var(--lumo-border-radius-m) / 4);transition: color 0.2s;line-height: 1;padding-bottom: 0.25em;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;position: relative; width: 100%;box-sizing: border-box;">
+                <vaadin-horizontal-layout size-full :expand>
+                    <label part="label" id="vaadin-text-field-label-1">Detector configuration</label>
+                </vaadin-horizontal-layout>
+              </div>
+              <vaadin-horizontal-layout id="det_config_field">
+                <vaadin-combo-box name="name"></vaadin-combo-box>
+                <vaadin-button id="submitDetConfigButton" :middle>
+                    <iron-icon class = "small_icon" icon="icons:send"></iron-icon>Submit</vaadin-button>
+                <paper-tooltip for="submitDetConfigButton" position="bottom" animation-delay="0">Runs script with predefined detector configuration.</paper-tooltip>
+              </vaadin-horizontal-layout>
+            </div>
         </div>
-      </div>
     </div>
 
     <div class="card">
@@ -168,9 +189,9 @@ class ConfigView extends connect(store)(PolymerElement) {
     this.loaded_config = false;
     const notification = this.$.notify;
     // requests configuration from server
-    var socket = io.connect('http://' + document.domain + ':' + location.port);
+    const socket = io.connect('http://' + document.domain + ':' + location.port);
     // gets configView from shadowRoot
-    const configView = document.querySelector('body > my-app').shadowRoot.querySelector('app-drawer-layout > app-header-layout > iron-pages > config-view')
+    const configView = document.querySelector('body > my-app').shadowRoot.querySelector('app-drawer-layout > app-header-layout > iron-pages > config-view');
   
     // if input field was editted turn load button enabled and disable others
     this.$.det_api_field.addEventListener("change", function(){
@@ -193,8 +214,19 @@ class ConfigView extends connect(store)(PolymerElement) {
       
     });
 
-    // puts focus on the input field
-    this.$.det_api_field.focus()
+    customElements.whenDefined('vaadin-combo-box').then(function() {
+      const comboBox = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#det_config_field > vaadin-combo-box");
+      const button = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#submitDetConfigButton");
+
+      comboBox.items = ['Eiger9M', 'Eiger4M'];
+
+      button.addEventListener('click', function() {
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+        socket.emit('setDetectorConfigScript', {'detector_model': comboBox.value, 'det_api_address': configView.det_api_address});
+      });
+    });
+
+    
 
     // enter pressed while input field was focused -> loads config
     this.$.det_api_field.addEventListener('keypress', function (e) {
@@ -235,6 +267,9 @@ class ConfigView extends connect(store)(PolymerElement) {
     this.$.submitConfigButton.addEventListener('click', function() {
       configView.submitConfigButtonDia(notification, configView, socket);
     });
+
+    // focus on the input field
+    this.$.det_api_field.focus()
   }
 
   submitConfigButtonDia(notification, configView, socket){
@@ -517,6 +552,11 @@ class ConfigView extends connect(store)(PolymerElement) {
         socket.emit('emitStartDiaService', submitJson);
         // closes the dialog message
         dialog.opened = false;
+        
+        // stops the stats monitor
+        const statsConfig = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#stats_accordion > vaadin-vertical-layout > stats-config");
+        statsConfig.stopStatisticsWorker();
+
       });
 
       root.appendChild(div);

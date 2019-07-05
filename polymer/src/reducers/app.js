@@ -44,6 +44,7 @@ const initialState = {
         "cycles": 0.0,
         "timing": "--",
         "dr": 0.0},
+    dia_log: "--",
     backend_config :{"bit_depth": 0,
         "n_frames": 0},
     writer_config : {"output_file": "--",
@@ -82,6 +83,9 @@ const app = (state=initialState, action) => {
         }
         case 'ERROR_LOADING_CONFIG':{
             return {...state, problemLoadingConfig: action.payload}
+        }
+        case 'RECEIVED_DIA_LOG':{
+            return {...state, dia_log: action.payload}
         }
         default:
             return initialState
