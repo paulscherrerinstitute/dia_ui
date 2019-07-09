@@ -213,7 +213,7 @@ class MyApp extends connect(store)(PolymerElement) {
 
     socket.on('problemWithRequest', function(msg){
       const configView = document.querySelector('body > my-app').shadowRoot.querySelector('app-drawer-layout > app-header-layout > iron-pages > config-view')
-      configView.problemStartRequest(msg)
+      configView.problemStartRequest(msg, true)
     })
 
     socket.on('finishedRequestSuccessfully', function(msg){

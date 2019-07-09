@@ -120,8 +120,6 @@ def stop_from_client(json, methods=['GET', 'POST']):
 @socketio.on('setDetectorConfigScript')
 def set_detector_config(json, methods=['GET', 'POST']):
     # gets which script file to run
-    print(json)
-    print('\n\n\n\n')
     det_model = json['detector_model']
     try:
         # runs the set detector config with the desired configuration model
@@ -271,14 +269,14 @@ def clearStatisticsBuffer(json, methods=['GET', 'POST']):
 @socketio.on('requestDiaLog')
 def get_diaLog(json, methods=['GET', 'POST']):
     dia_log_file = Path("./dia_service.log")
-    if dia_log_file.is_file():
+    if dia_log_file.is_file() and len(open(dia_log_file, 'r').read()) > 0:
         diaLogContent = open(dia_log_file, 'r').read()
         # emits writer start configuration
         socketio.emit('sendingDiaLog', diaLogContent)
         # emits finished request
         socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
     else:
-        socketio.emit('problemWithRequest', {'status':'Dia log file does not exists.'})
+        socketio.emit('problemWithRequest', {'status':'Dia log file does not exists or it is empty.'})
         
         
 

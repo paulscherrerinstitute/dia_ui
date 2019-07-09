@@ -18,6 +18,7 @@ import '@vaadin/vaadin-accordion/vaadin-accordion.js';
 import '@vaadin/vaadin-button/vaadin-button.js';
 import '@vaadin/vaadin-dialog/vaadin-dialog.js';
 import '@vaadin/vaadin-icons/vaadin-icons.js';
+import '@vaadin/vaadin-checkbox/vaadin-checkbox.js';
 import '@vaadin/vaadin-tabs/vaadin-tabs.js';
 import '@vaadin/vaadin-combo-box/vaadin-combo-box.js';
 import '@vaadin/vaadin-notification/vaadin-notification.js';
@@ -67,8 +68,8 @@ class ConfigView extends connect(store)(PolymerElement) {
     }
 
     .small_icon {
-      --iron-icon-height: 17px;
-      --iron-icon-width: 17px;
+      --iron-icon-height: 17px!important;
+      --iron-icon-width: 17px!important; 
     }
     
     @media screen and (max-width: 930px) {
@@ -128,14 +129,15 @@ class ConfigView extends connect(store)(PolymerElement) {
                 </vaadin-horizontal-layout>
             </div>
             <div class="columnRight2">
-                <div class="vaadin-text-field-container" style="padding-top: var(--lumo-space-m);align-self: flex-start;color: var(--lumo-secondary-text-color);font-size: var(--lumo-font-size-s);margin-left: calc(var(--lumo-border-radius-m) / 4);transition: color 0.2s;line-height: 1;padding-bottom: 0.25em;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;position: relative; width: 100%;box-sizing: border-box;">
+              <div class="vaadin-text-field-container" style="padding-top: var(--lumo-space-m);align-self: flex-start;color: var(--lumo-secondary-text-color);font-size: var(--lumo-font-size-s);margin-left: calc(var(--lumo-border-radius-m) / 4);transition: color 0.2s;line-height: 1;padding-bottom: 0.25em;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;position: relative; width: 100%;box-sizing: border-box;">
                 <vaadin-horizontal-layout size-full :expand>
-                    <label part="label" id="vaadin-text-field-label-1">Detector configuration</label>
+                  <vaadin-checkbox></vaadin-checkbox>
+                  <label part="label" id="vaadin-text-field-label-1">Detector configuration</label>
                 </vaadin-horizontal-layout>
               </div>
               <vaadin-horizontal-layout id="det_config_field">
-                <vaadin-combo-box name="name"></vaadin-combo-box>
-                <vaadin-button id="submitDetConfigButton" :middle>
+                <vaadin-combo-box disabled name="name"></vaadin-combo-box>
+                <vaadin-button disabled id="submitDetConfigButton" :middle>
                     <iron-icon class = "small_icon" icon="icons:send"></iron-icon>Submit</vaadin-button>
                 <paper-tooltip for="submitDetConfigButton" position="bottom" animation-delay="0">Runs script with predefined detector configuration.</paper-tooltip>
               </vaadin-horizontal-layout>
@@ -221,8 +223,49 @@ class ConfigView extends connect(store)(PolymerElement) {
       comboBox.items = ['Eiger9M', 'Eiger4M'];
 
       button.addEventListener('click', function() {
-        var socket = io.connect('http://' + document.domain + ':' + location.port);
-        socket.emit('setDetectorConfigScript', {'detector_model': comboBox.value, 'det_api_address': configView.det_api_address});
+        var arraycontainsturtles = (comboBox.items.indexOf(comboBox.value) > -1);
+        if (arraycontainsturtles){
+          notification.open()
+          // submit signal to run detector config script
+          var socket = io.connect('http://' + document.domain + ':' + location.port);
+          socket.emit('setDetectorConfigScript', {'detector_model': comboBox.value, 'det_api_address': configView.det_api_address});
+          console.log(comboBox.value);
+          // disables the field again
+          const checkbox = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("div:nth-child(2) > div > div.columnRight2 > div > vaadin-horizontal-layout > vaadin-checkbox");
+          checkbox.removeAttribute("checked");
+          comboBox.setAttribute("disabled", "disabled");
+          button.setAttribute("disabled", "disabled");
+          // shows notification
+          notification.renderer = function(root) {
+            root.textContent = 'Running detector configuration script on server '+ configView.$.det_api_field.value +'.';
+          };
+        }else{
+          configView.problemStartRequest({'status':'Configuration script not found, please select one of the valid options from the dropdown menu.'}, false);
+        }
+      });
+    });
+
+    customElements.whenDefined('vaadin-checkbox').then(function() {
+      const checkbox = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("div:nth-child(2) > div > div.columnRight2 > div > vaadin-horizontal-layout > vaadin-checkbox");
+  
+      checkbox.addEventListener('click', function(event) {
+        notification.open()
+        const comboBox = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#det_config_field > vaadin-combo-box");
+        const button = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#submitDetConfigButton");
+        var checkBoxValue = checkbox.getAttribute("aria-checked");
+        if (checkBoxValue == "false"){
+          comboBox.setAttribute("disabled", "disabled")
+          button.setAttribute("disabled", "disabled")
+          notification.renderer = function(root) {
+            root.textContent = 'Disabling the detector configuration panel.';
+          };
+        }else{
+          comboBox.removeAttribute("disabled")
+          button.removeAttribute("disabled")
+          notification.renderer = function(root) {
+            root.textContent = 'Enabling the detector configuration panel.';
+          };
+        }
       });
     });
 
@@ -497,7 +540,7 @@ class ConfigView extends connect(store)(PolymerElement) {
     progressBar.removeAttribute("theme");
   }
 
-  problemStartRequest(msg){
+  problemStartRequest(msg, startDiaButton){
   customElements.whenDefined('vaadin-dialog').then(function() {
     const dialog = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("div:nth-child(2) > div > div.columnRight > div > vaadin-horizontal-layout > vaadin-dialog");
     dialog.renderer = function(root, dialog) {
@@ -540,29 +583,34 @@ class ConfigView extends connect(store)(PolymerElement) {
       okButton.addEventListener('click', function() {
         dialog.opened = false;
       });
+      root.appendChild(div);
+      root.appendChild(br);
+      root.appendChild(okButton);
+      if (startDiaButton == true){
       const startServiceButton = window.document.createElement('vaadin-button');
       startServiceButton.setAttribute('theme', 'primary');
       startServiceButton.textContent = 'Start DIA service';
       startServiceButton.setAttribute('style', 'margin-right: 1em');
       startServiceButton.addEventListener('click', function() {
-        // emits the signal to start the DIA service on desired host machine
-        const submitJson = {'det_api_address': configView.det_api_address};
-        // connects to the socket to request the start of the dia service
-        var socket = io.connect('http://' + document.domain + ':' + location.port);
-        socket.emit('emitStartDiaService', submitJson);
-        // closes the dialog message
-        dialog.opened = false;
-        
-        // stops the stats monitor
-        const statsConfig = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#stats_accordion > vaadin-vertical-layout > stats-config");
-        statsConfig.stopStatisticsWorker();
+          // emits the signal to start the DIA service on desired host machine
+          const submitJson = {'det_api_address': configView.det_api_address};
+          // connects to the socket to request the start of the dia service
+          var socket = io.connect('http://' + document.domain + ':' + location.port);
+          socket.emit('emitStartDiaService', submitJson);
+          // closes the dialog message
+          dialog.opened = false;
+          
+          // stops the stats monitor
+          const statsConfig = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#stats_accordion > vaadin-vertical-layout > stats-config");
+          statsConfig.stopStatisticsWorker();
 
-      });
-
-      root.appendChild(div);
-      root.appendChild(br);
+        });
       root.appendChild(startServiceButton);
-      root.appendChild(okButton);
+      }
+
+      
+      
+      
     };
     dialog.opened = true;
     
