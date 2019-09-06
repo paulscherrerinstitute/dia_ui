@@ -32,8 +32,6 @@ def favicon():
 #     return app.send_static_file('./service-worker.js')
 
 @app.route('/', methods=['GET'])
-# @app.route('/view1', methods=['GET'])
-# @app.route('/view2', methods=['GET'])
 @app.route('/config', methods=['GET'])
 def root():
     return app.send_static_file('index.html')
@@ -52,10 +50,10 @@ def test_connect():
     
 
     #Start the random number generator thread only if the thread has not been started before.
-    if not thread.isAlive():
-        print("Starting Thread")
-        thread = ClientThread(int(default_port_source), -1, default_host_source)
-        thread.start()
+    # if not thread.isAlive():
+    #     print("Starting Thread")
+    #     thread = ClientThread(int(default_port_source), -1, default_host_source)
+    #     thread.start()
 
 # Detecs when a client disconnects
 @socketio.on('disconnect')
@@ -73,7 +71,7 @@ def new_config_from_client(json, methods=['GET', 'POST']):
         client.set_config(json['configuration'])
     except Exception as e:
         # emits problem
-        socketio.emit('problemWithRequest', {'status':'{0}'.format(e)})
+        socketio.emit('problemWithRequest', {'status':'{0}'.format(e), 'start_dia_option':'no'})
         # emits finished request
         socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
     else:
@@ -100,7 +98,7 @@ def stop_from_client(json, methods=['GET', 'POST']):
         client.stop()
     except Exception as e:
         # emits problem
-        socketio.emit('problemWithRequest', {'status':'{0}'.format(e)})
+        socketio.emit('problemWithRequest', {'status':'{0}'.format(e), 'start_dia_option':'no'})
         # emits finished request
         socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
     else:
@@ -126,9 +124,9 @@ def set_detector_config(json, methods=['GET', 'POST']):
         os.system("sh run_detector_config.sh "+det_model)
     except Exception as e:
         # emits problem
-        socketio.emit('problemWithRequest', {'status':'{0}'.format(e)})
+        socketio.emit('problemWithRequest', {'status':'{0}'.format(e), 'start_dia_option':'no'})
         # emits finished request
-        socketio.emit('finishedRequestSuccessfully', {'status':'ok'})    
+        socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
     else:
         # emits finished request
         socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
@@ -142,9 +140,9 @@ def start_dia_script(json, methods=['GET', 'POST']):
         
     except Exception as e:
         # emits problem
-        socketio.emit('problemWithRequest', {'status':'{0}'.format(e)})
+        socketio.emit('problemWithRequest', {'status':'{0}'.format(e), 'start_dia_option':'no'})
         # emits finished request
-        socketio.emit('finishedRequestSuccessfully', {'status':'ok'})    
+        socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
     else:
         # Dia now running
         api_det_address = json['det_api_address']
@@ -176,7 +174,7 @@ def start_from_client(json, methods=['GET', 'POST']):
         client.start()
     except Exception as e:
         # emits problem
-        socketio.emit('problemWithRequest', {'status':'{0}'.format(e)})
+        socketio.emit('problemWithRequest', {'status':'{0}'.format(e), 'start_dia_option':'no'})
         # emits finished request
         socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
     else:
@@ -203,7 +201,7 @@ def start_from_client(json, methods=['GET', 'POST']):
         client.reset()
     except Exception as e:
         # emits problem
-        socketio.emit('problemWithRequest', {'status':'{0}'.format(e)})
+        socketio.emit('problemWithRequest', {'status':'{0}'.format(e), 'start_dia_option':'no'})
         # emits finished request
         socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
     else:
@@ -232,7 +230,7 @@ def get_diaConfig(json, methods=['GET', 'POST']):
         jsonConfig = client.get_config()
     except Exception as e:
         # emits problem
-        socketio.emit('problemWithRequest', {'status':'{0}'.format(e)})
+        socketio.emit('problemWithRequest', {'status':'{0}'.format(e), 'start_dia_option':'yes'})
         # emits finished request
         socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
     else:
@@ -256,10 +254,9 @@ def clearStatisticsBuffer(json, methods=['GET', 'POST']):
     client = DetectorIntegrationClient(api_det_address)
     try:
         json = client.clear_statistics_buffer()
-        print(json, "testeeee \n\n\n\n\n")
     except Exception as e:
         # emits problem
-        socketio.emit('problemWithRequest', {'status':'{0}'.format(e)})
+        socketio.emit('problemWithRequest', {'status':'{0}'.format(e), 'start_dia_option':'no'})
         # emits finished request
         socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
     else: 
@@ -276,7 +273,7 @@ def get_diaLog(json, methods=['GET', 'POST']):
         # emits finished request
         socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
     else:
-        socketio.emit('problemWithRequest', {'status':'Dia log file does not exists or it is empty.'})
+        socketio.emit('problemWithRequest', {'status':'Dia log file does not exists or it is empty.', 'start_dia_option':'no'})
         
         
 
@@ -291,7 +288,7 @@ def get_StatisticsStart(json, methods=['GET', 'POST']):
         jsonStats = client.get_statisticsStart()
     except Exception as e:
         # emits problem
-        socketio.emit('problemWithRequest', {'status':'{0}'.format(e)})
+        socketio.emit('problemWithRequest', {'status':'{0}'.format(e), 'start_dia_option':'caraio'})
         # emits finished request
         socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
     else:
@@ -304,7 +301,7 @@ def get_StatisticsStart(json, methods=['GET', 'POST']):
                 # emits finished request
                 socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
             else: 
-                socketio.emit('problemWithRequest', {'status':'Problem with statistics json request.'})
+                socketio.emit('problemWithRequest', {'status':'Problem with statistics json request.', 'start_dia_option':'no'})
 
 @socketio.on('emitGetStatistics')
 def get_Statistics(json, methods=['GET', 'POST']):
@@ -317,7 +314,7 @@ def get_Statistics(json, methods=['GET', 'POST']):
         jsonStats = client.get_statistics()
     except Exception as e:
         # emits problem
-        socketio.emit('problemWithRequest', {'status':'{0}'.format(e)})
+        socketio.emit('problemWithRequest', {'status':'{0}'.format(e), 'start_dia_option':'no'})
         # emits finished request
         socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
     else:
@@ -345,94 +342,83 @@ def get_Statistics(json, methods=['GET', 'POST']):
                 # emits finished request
                 socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
             else: 
-                socketio.emit('problemWithRequest', {'status':'Problem with statistics json request.'})
-            # elif "backend" in jsonStats['statistics']:
-            #     # to be implemented
-            #     print('Requested backend statistics... to be implemented...')
-            #     socketio.emit('problemWithRequest', {'status':'Backend statistics not yet implemented...'})
-            # elif "detector" in jsonStats['statistics']:
-            #     # to be implemented
-            #     print('Requested detector statistics... to be implemented...')
-            #     socketio.emit('problemWithRequest', {'status':'Detector statistics not yet implemented...'})
-            # else:
-            #     socketio.emit('problemWithRequest', {'status':'Problem with statistics json file...'})
-
+                socketio.emit('problemWithRequest', {'status':'Problem with statistics json request.', 'start_dia_option':'no'})
 
 # Server thread
 thread = Thread()
 thread_stop_event = Event()
 
-class ClientThread(Thread):
-    def __init__(self, port, n_img, stream_host, ):
-        super(ClientThread, self).__init__()
-        self._delay = 1.5
-        self._stream_output_port = port
-        self._n_images = n_img
-        self._stream_host = stream_host
+# class ClientThread(Thread):
+#     def __init__(self, port, n_img, stream_host, ):
+#         super(ClientThread, self).__init__()
+#         self._delay = 1.5
+#         self._stream_output_port = port
+#         self._n_images = n_img
+#         self._stream_host = stream_host
 
-    def receive_stream(self):
-        """
-        Function that receives the stream and send the signal for the clients using socketio.
-        """
-        message = None
-        # You always need to specify the host parameter, otherwise bsread will try to access PSI servers.
-        with source(host=self._stream_host, port=self._stream_output_port, receive_timeout=1000) as input_stream:
+#     def receive_stream(self):
+#         """
+#         Function that receives the stream and send the signal for the clients using socketio.
+#         """
+#         message = None
+#         # You always need to specify the host parameter, otherwise bsread will try to access PSI servers.
+#         with source(host=self._stream_host, port=self._stream_output_port, receive_timeout=1000) as input_stream:
 
-            n_received = 0
-            # Detects how many messages are expected
-            if self._n_images == -1:
-                while True:
-                    message = input_stream.receive()
-                    # In case of receive timeout (1000 ms in this example), the received data is None.
-                    if message is None:
-                        continue
-                    else:
-                        # Creates the image and saves to the file that is shown to the client
-                        # pyplot.imshow(message.data.data['image'].value)
-                        # pyplot.savefig('./stream_online_viewer/static/images/stream.png')
-                        # Increases the number of received messages
-                        n_received += 1
-                        # Generates the data containing meaningful information to the client
-                        data = {'number_of_received_messages':  n_received, 
-                                'data': n_received,
-                                'messages_received': float(message.statistics.messages_received),
-                                'total_bytes_received': float(message.statistics.total_bytes_received),
-                                'repetition_rate': float(message.data.data['repetition_rate'].value),
-                                'beam_energy': float(message.data.data['beam_energy'].value),
-                                'image_size_y': float(message.data.data['image_size_y'].value),
-                                'image_size_x': float(message.data.data['image_size_x'].value)
-                                }
-                        # emits the signal with the data
-                        if n_received % 25 == 0:
-                            socketio.emit('newBSREAD', data)
-                            print("Emit: ", float(message.data.data['beam_energy'].value))
-            else:
-                for _ in range(self._n_images):
-                    message = input_stream.receive()
-                    # In case of receive timeout (1000 ms in this example), the received data is None.
-                    if message is None:
-                        continue
-                    else:
-                        # Creates the image and saves to the file that is shown to the client
-                        # pyplot.imshow(message.data.data['image'].value)
-                        # pyplot.savefig('./stream_online_viewer/static/images/stream.png')
-                        # Increases the number of received messages
-                        n_received += 1
-                        # Generates the data containing meaningful information to the client
-                        data = {'number_of_received_messages':  n_received, 
-                                'data': n_received,
-                                'messages_received': float(message.statistics.messages_received),
-                                'total_bytes_received': float(message.statistics.total_bytes_received),
-                                'repetition_rate': float(message.data.data['repetition_rate'].value),
-                                'beam_energy': float(message.data.data['beam_energy'].value),
-                                'image_size_y': float(message.data.data['image_size_y'].value),
-                                'image_size_x': float(message.data.data['image_size_x'].value)
-                                }
-                        # emits the signal with the data
-                        socketio.emit('newBSREAD', data, namespace='/test')
+#             n_received = 0
+#             # Detects how many messages are expected
+#             if self._n_images == -1:
+#                 while True:
+#                     message = input_stream.receive()
+#                     # In case of receive timeout (1000 ms in this example), the received data is None.
+#                     if message is None:
+#                         continue
+#                     else:
+#                         # Creates the image and saves to the file that is shown to the client
+#                         # pyplot.imshow(message.data.data['image'].value)
+#                         # pyplot.savefig('./stream_online_viewer/static/images/stream.png')
+#                         # Increases the number of received messages
+#                         n_received += 1
+#                         # Generates the data containing meaningful information to the client
+#                         data = {'number_of_received_messages':  n_received, 
+#                                 'data': n_received,
+#                                 'messages_received': float(message.statistics.messages_received),
+#                                 'total_bytes_received': float(message.statistics.total_bytes_received),
+#                                 'repetition_rate': float(message.data.data['repetition_rate'].value),
+#                                 'beam_energy': float(message.data.data['beam_energy'].value),
+#                                 'image_size_y': float(message.data.data['image_size_y'].value),
+#                                 'image_size_x': float(message.data.data['image_size_x'].value)
+#                                 }
+#                         # emits the signal with the data
+#                         if n_received % 25 == 0:
+#                             socketio.emit('newBSREAD', data)
+#                             print("Emit: ", float(message.data.data['beam_energy'].value))
+#             else:
+#                 for _ in range(self._n_images):
+#                     message = input_stream.receive()
+#                     # In case of receive timeout (1000 ms in this example), the received data is None.
+#                     if message is None:
+#                         continue
+#                     else:
+#                         # Creates the image and saves to the file that is shown to the client
+#                         # pyplot.imshow(message.data.data['image'].value)
+#                         # pyplot.savefig('./stream_online_viewer/static/images/stream.png')
+#                         # Increases the number of received messages
+#                         n_received += 1
+#                         # Generates the data containing meaningful information to the client
+#                         data = {'number_of_received_messages':  n_received, 
+#                                 'data': n_received,
+#                                 'messages_received': float(message.statistics.messages_received),
+#                                 'total_bytes_received': float(message.statistics.total_bytes_received),
+#                                 'repetition_rate': float(message.data.data['repetition_rate'].value),
+#                                 'beam_energy': float(message.data.data['beam_energy'].value),
+#                                 'image_size_y': float(message.data.data['image_size_y'].value),
+#                                 'image_size_x': float(message.data.data['image_size_x'].value)
+#                                 }
+#                         # emits the signal with the data
+#                         socketio.emit('newBSREAD', data, namespace='/test')
 
-    def run(self):
-        self.receive_stream()
+#     def run(self):
+#         self.receive_stream()
 
 if __name__ == '__main__':
     # Default host 

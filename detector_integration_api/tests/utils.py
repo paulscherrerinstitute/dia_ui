@@ -1,7 +1,9 @@
-import bottle
+import bottle, datetime, threading
+from logging import getLogger
 
 from detector_integration_api.rest_api.rest_server import register_rest_interface
 
+_logger = getLogger(__name__)
 
 class MockBackendClient(object):
     def __init__(self):
@@ -24,10 +26,6 @@ class MockBackendClient(object):
 
     def reset(self):
         self.status = "INITIALIZED"
-
-    def get_metrics(self):
-        return {}
-
 
 class MockDetectorClient(object):
     def __init__(self):
@@ -53,6 +51,8 @@ class MockDetectorClient(object):
         self.config[name] = value
         return value
 
+    def get_statistics(self):
+        return {}
 
 class MockMflowNodesClient(object):
     def __init__(self):
@@ -83,7 +83,7 @@ class MockExternalProcessClient(object):
         self.url = "http://localhost:10000"
 
     def start(self):
-        self.status = "writing"
+        self.status = "writing"          
 
     def stop(self):
         self.status = "stopped"

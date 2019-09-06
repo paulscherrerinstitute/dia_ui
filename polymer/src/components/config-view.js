@@ -49,6 +49,13 @@ class ConfigView extends connect(store)(PolymerElement) {
         width: 100%;
         display: flex;
     }
+
+    .groupBorderLine {
+      opacity: 1;
+      border: 1px dashed var(--lumo-contrast-30pct);
+      position: relative;
+      border-radius: var(--lumo-border-radius);
+    }
     
     .columnLeft {
         float: left;
@@ -92,58 +99,58 @@ class ConfigView extends connect(store)(PolymerElement) {
     </style>
 
     <div class="card">
-        <div class="row">
-            <div class="columnLeft">
-                <vaadin-text-field label="DIA API Address" value="http://0.0.0.0:10000" id="det_api_field"></vaadin-text-field>
-                <paper-tooltip for="det_api_field" position="bottom" animation-delay="0">Address of the DIA interface</paper-tooltip>
-            </div>
-            <div class="columnRight">
-                <div class="vaadin-text-field-container" style="padding-top: var(--lumo-space-m);align-self: flex-start;color: var(--lumo-secondary-text-color);font-size: var(--lumo-font-size-s);margin-left: calc(var(--lumo-border-radius-m) / 4);transition: color 0.2s;line-height: 1;padding-bottom: 0.25em;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;position: relative; width: 100%;box-sizing: border-box;">
-                    <vaadin-horizontal-layout size-full :expand>
-                        <label part="label" id="vaadin-text-field-label-1">DIA Control panel</label>
-                        <vaadin-progress-bar hidden id="progressBar" indeterminate value="0" style="float:right;margin-right: calc(var(--lumo-border-radius-m) / 4);max-width: 65%;"></vaadin-progress-bar>
-                        <div part="error-message" aria-live="assertive" aria-hidden="true" id="vaadin-text-field-error-1"></div>
-                        <vaadin-dialog id="dialog" no-close-on-esc no-close-on-outside-click></vaadin-dialog>
-                    </vaadin-horizontal-layout>
-                </div>
-                <vaadin-horizontal-layout id="control_panel_field">
-                    <vaadin-button id="loadConfigButton" :middle>
-                        <iron-icon class = "small_icon" icon="vaadin:download-alt"></iron-icon>Load</vaadin-button>
-                    <paper-tooltip for="loadConfigButton" position="bottom" animation-delay="0">Loads configuration from DIA address</paper-tooltip>
-                    <vaadin-button class = "small_icon" id="editConfigButton" :middle disabled>
-                        <iron-icon icon="vaadin:edit"></iron-icon>Edit</vaadin-button>
-                    <paper-tooltip for="editConfigButton" position="bottom" animation-delay="0">Enable editting the configuration values</paper-tooltip>
-                    <vaadin-button class = "small_icon" id="submitConfigButton" :middle disabled>
-                        <iron-icon icon="icons:send"></iron-icon>Submit</vaadin-button>
-                    <paper-tooltip for="submitConfigButton" position="bottom" animation-delay="0">Submits configuration the DIA address</paper-tooltip>
-                    <vaadin-button class = "small_icon" id="startConfigButton" :middle disabled>
-                        <iron-icon icon="vaadin:start-cog"></iron-icon>Start</vaadin-button>
-                    <paper-tooltip for="startConfigButton" position="bottom" animation-delay="0">Starts the DIA</paper-tooltip>
-                    <vaadin-button class = "small_icon" id="stopConfigButton" :middle disabled>
-                        <iron-icon icon="vaadin:stop-cog"></iron-icon>Stop</vaadin-button>
-                    <paper-tooltip for="stopConfigButton" position="bottom" animation-delay="0">Stop the DIA</paper-tooltip>
-                    <vaadin-button class = "small_icon" id="resetConfigButton" :middle disabled>
-                        <iron-icon icon="vaadin:refresh"></iron-icon>Reset</vaadin-button>
-                    <paper-tooltip for="resetConfigButton" position="bottom" animation-delay="0">Resets the DIA</paper-tooltip>
-                    <vaadin-notification id="notify" duration="1500" position="top-end"></vaadin-notification>
-                </vaadin-horizontal-layout>
-            </div>
-            <div class="columnRight2">
+      <div class="row">
+          <div class="columnLeft">
+              <vaadin-text-field label="DIA API Address" value="http://0.0.0.0:10000" id="det_api_field"></vaadin-text-field>
+              <paper-tooltip for="det_api_field" position="bottom" animation-delay="0">Address of the DIA interface</paper-tooltip>
+          </div><!-- columnLeft -->
+          <div class="columnRight">
               <div class="vaadin-text-field-container" style="padding-top: var(--lumo-space-m);align-self: flex-start;color: var(--lumo-secondary-text-color);font-size: var(--lumo-font-size-s);margin-left: calc(var(--lumo-border-radius-m) / 4);transition: color 0.2s;line-height: 1;padding-bottom: 0.25em;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;position: relative; width: 100%;box-sizing: border-box;">
-                <vaadin-horizontal-layout size-full :expand>
-                  <vaadin-checkbox></vaadin-checkbox>
-                  <label part="label" id="vaadin-text-field-label-1">Detector configuration</label>
-                </vaadin-horizontal-layout>
-              </div>
-              <vaadin-horizontal-layout id="det_config_field">
-                <vaadin-combo-box disabled name="name"></vaadin-combo-box>
-                <vaadin-button disabled id="submitDetConfigButton" :middle>
-                    <iron-icon class = "small_icon" icon="icons:send"></iron-icon>Submit</vaadin-button>
-                <paper-tooltip for="submitDetConfigButton" position="bottom" animation-delay="0">Runs script with predefined detector configuration.</paper-tooltip>
+                  <vaadin-horizontal-layout size-full :expand>
+                      <label part="label" id="vaadin-text-field-label-1">DIA Control panel</label>
+                      <vaadin-progress-bar hidden id="progressBar" indeterminate value="0" style="float:right;margin-right: calc(var(--lumo-border-radius-m) / 4);max-width: 65%;"></vaadin-progress-bar>
+                      <div part="error-message" aria-live="assertive" aria-hidden="true" id="vaadin-text-field-error-1"></div>
+                      <vaadin-dialog id="dialog" no-close-on-esc no-close-on-outside-click></vaadin-dialog>
+                  </vaadin-horizontal-layout>
+              </div> <!-- vaadin-text-field-container -->
+              <vaadin-horizontal-layout id="control_panel_field">
+                  <vaadin-button id="loadConfigButton" :middle>
+                      <iron-icon class="small_icon" icon="vaadin:download-alt"></iron-icon>Load</vaadin-button>
+                  <paper-tooltip for="loadConfigButton" position="bottom" animation-delay="0">Loads configuration from DIA address</paper-tooltip>
+                  <vaadin-button class="small_icon" id="editConfigButton" :middle disabled>
+                      <iron-icon icon="vaadin:edit"></iron-icon>Edit</vaadin-button>
+                  <paper-tooltip for="editConfigButton" position="bottom" animation-delay="0">Enable editting the configuration values</paper-tooltip>
+                  <vaadin-button class="small_icon" id="submitConfigButton" :middle disabled>
+                      <iron-icon icon="icons:send"></iron-icon>Submit</vaadin-button>
+                  <paper-tooltip for="submitConfigButton" position="bottom" animation-delay="0">Submits configuration the DIA address</paper-tooltip>
+                  <vaadin-button class="small_icon" id="startConfigButton" :middle disabled>
+                      <iron-icon icon="vaadin:start-cog"></iron-icon>Start</vaadin-button>
+                  <paper-tooltip for="startConfigButton" position="bottom" animation-delay="0">Starts the DIA</paper-tooltip>
+                  <vaadin-button class="small_icon" id="stopConfigButton" :middle disabled>
+                      <iron-icon icon="vaadin:stop-cog"></iron-icon>Stop</vaadin-button>
+                  <paper-tooltip for="stopConfigButton" position="bottom" animation-delay="0">Stop the DIA</paper-tooltip>
+                  <vaadin-button class="small_icon" id="resetConfigButton" :middle disabled>
+                      <iron-icon icon="vaadin:refresh"></iron-icon>Reset</vaadin-button>
+                  <paper-tooltip for="resetConfigButton" position="bottom" animation-delay="0">Resets the DIA</paper-tooltip>
+                  <vaadin-notification id="notify" duration="1500" position="top-end"></vaadin-notification>
               </vaadin-horizontal-layout>
-            </div>
-        </div>
-    </div>
+          </div> <!-- columnRight -->
+          <div class="columnRight2">
+              <div class="vaadin-text-field-container" style="padding-top: 13px;align-self: flex-start;color: var(--lumo-secondary-text-color);font-size: var(--lumo-font-size-s);margin-left: calc(var(--lumo-border-radius-m) / 4);transition: color 0.2s;line-height: 1;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;position: relative; width: 100%;box-sizing: border-box;">
+                  <vaadin-horizontal-layout size-full :expand>
+                      <vaadin-checkbox></vaadin-checkbox>
+                      <label part="label" id="vaadin-text-field-label-1">Detector configuration</label>
+                  </vaadin-horizontal-layout>
+              </div><!-- vaadin-text-field-container -->
+              <vaadin-horizontal-layout id="det_config_field">
+                  <vaadin-combo-box disabled name="name"></vaadin-combo-box>
+                  <vaadin-button disabled id="submitDetConfigButton" :middle>
+                      <iron-icon class="small_icon" icon="icons:send"></iron-icon>Submit</vaadin-button>
+                  <paper-tooltip for="submitDetConfigButton" position="bottom" animation-delay="0">Runs script with predefined detector configuration.</paper-tooltip>
+              </vaadin-horizontal-layout>
+          </div><!-- columnRight2 -->
+      </div><!-- row -->
+    </div><!-- card -->
 
     <div class="card">
         <vaadin-vertical-layout>
@@ -156,7 +163,7 @@ class ConfigView extends connect(store)(PolymerElement) {
                 </vaadin-accordion-panel>
             </vaadin-acoordion>
         </vaadin-vertical-layout>
-    </div>
+    </div><!-- card -->
     <div class="card">
         <vaadin-vertical-layout>
             <vaadin-acoordion>
@@ -168,7 +175,7 @@ class ConfigView extends connect(store)(PolymerElement) {
                 </vaadin-accordion-panel>
             </vaadin-acoordion>
         </vaadin-vertical-layout>
-    </div>
+    </div><!-- card -->
       
     `;
   }
@@ -421,22 +428,18 @@ class ConfigView extends connect(store)(PolymerElement) {
   }
 
   loadsConfigurationFromDIA(notification, configView, socket){
-    // stops the stats monitor
     const statsConfig = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#stats_accordion > vaadin-vertical-layout > stats-config");
-    statsConfig.stopStatisticsWorker();
+    statsConfig.stopStatisticsWorker()
     notification.open();
     configView.loaded_config = true;
     configView.det_api_address = configView.$.det_api_field.value;
-    
+
     socket.emit('emitLoad', {'det_api_address': configView.det_api_address});
     // presents the configuration
     configView.$.config_accordion.removeAttribute("disabled");
     // enables the statistics accordion
     configView.$.stats_accordion.removeAttribute("disabled");
 
-
-    // start the statistics worker
-    statsConfig.startStatisticsWorker();
     // disable the load button
     configView.$.loadConfigButton.setAttribute("disabled", "disabled");
 
@@ -557,7 +560,7 @@ class ConfigView extends connect(store)(PolymerElement) {
         // stops the stats monitor
         const statsConfig = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#stats_accordion > vaadin-vertical-layout > stats-config");
         statsConfig.stopStatisticsWorker();
-  
+
         // closes accordions
         configView.$.config_accordion.removeAttribute("opened");
         configView.$.stats_accordion.removeAttribute("opened");
@@ -586,34 +589,28 @@ class ConfigView extends connect(store)(PolymerElement) {
       root.appendChild(div);
       root.appendChild(br);
       root.appendChild(okButton);
-      if (startDiaButton == true){
+      if (startDiaButton == 'yes'){
       const startServiceButton = window.document.createElement('vaadin-button');
-      startServiceButton.setAttribute('theme', 'primary');
-      startServiceButton.textContent = 'Start DIA service';
-      startServiceButton.setAttribute('style', 'margin-right: 1em');
-      startServiceButton.addEventListener('click', function() {
-          // emits the signal to start the DIA service on desired host machine
-          const submitJson = {'det_api_address': configView.det_api_address};
-          // connects to the socket to request the start of the dia service
-          var socket = io.connect('http://' + document.domain + ':' + location.port);
-          socket.emit('emitStartDiaService', submitJson);
-          // closes the dialog message
-          dialog.opened = false;
-          
-          // stops the stats monitor
-          const statsConfig = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#stats_accordion > vaadin-vertical-layout > stats-config");
-          statsConfig.stopStatisticsWorker();
+        startServiceButton.setAttribute('theme', 'primary');
+        startServiceButton.textContent = 'Start DIA service';
+        startServiceButton.setAttribute('style', 'margin-right: 1em');
+        startServiceButton.addEventListener('click', function() {
+            // emits the signal to start the DIA service on desired host machine
+            const submitJson = {'det_api_address': configView.det_api_address};
+            // connects to the socket to request the start of the dia service
+            var socket = io.connect('http://' + document.domain + ':' + location.port);
+            socket.emit('emitStartDiaService', submitJson);
+            // closes the dialog message
+            dialog.opened = false;
+            // stops the stats monitor
+            const statsConfig = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#stats_accordion > vaadin-vertical-layout > stats-config");
+            statsConfig.stopStatisticsWorker();
 
-        });
-      root.appendChild(startServiceButton);
+          });
+        root.appendChild(startServiceButton);
       }
-
-      
-      
-      
     };
     dialog.opened = true;
-    
   });
 
   };

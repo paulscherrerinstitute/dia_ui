@@ -213,7 +213,7 @@ class MyApp extends connect(store)(PolymerElement) {
 
     socket.on('problemWithRequest', function(msg){
       const configView = document.querySelector('body > my-app').shadowRoot.querySelector('app-drawer-layout > app-header-layout > iron-pages > config-view')
-      configView.problemStartRequest(msg, true)
+      configView.problemStartRequest(msg, msg['start_dia_option']);
     })
 
     socket.on('finishedRequestSuccessfully', function(msg){
@@ -238,7 +238,6 @@ class MyApp extends connect(store)(PolymerElement) {
     configView.hideProgressBar()
     configView.updateControlPanelButtons()
   }
-  
 
   removeTodoItem(e){
     store.dispatch({type:'REMOVE', payload:e.model.index});

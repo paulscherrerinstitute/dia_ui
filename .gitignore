@@ -1,8 +1,13 @@
 # build and dependencies
 build/
 node_modules/
+detector_integration_api/
+# macos custom atributes
+.DS_Store
 # visual studio code config files
-diaui.code-workspace
+*.code-workspace
 .vscode/
 # python compiled files
 *.pyc
+# log files
+*.log
