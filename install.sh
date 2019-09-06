@@ -1,8 +1,8 @@
 #!/bin/bash
 # conda create new env
-conda create -n diaui
+conda create -n dia_ui
 # activates conda environmnet
-conda activate diaui
+conda activate dia_ui
 # add anaconda channels
 conda config -add channels conda-forge
 conda config --add channels paulscherrerinstitute

@@ -4,4 +4,4 @@ echo "[Start DIA service - ${DATE} ] Dia service started request.. " >> dia_serv
 conda activate /anaconda3/envs/diaui
 cd detector_integration_api
 export PYTHONPATH=`pwd`
-nohup python detector_integration_api/start_default_server.py > ../dia_service.log & 
+nohup python detector_integration_api/start_default_server.py > ../dia_service.log &
