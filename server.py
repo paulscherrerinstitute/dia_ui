@@ -426,9 +426,9 @@ if __name__ == '__main__':
     # Default port
     default_port="5000"
     # Default host stream
-    default_host_source="localhost"
+    # default_host_source="localhost"
     # Default port stream
-    default_port_source="8888"
+    # default_port_source="8888"
     # Parser of the options
     parser = optparse.OptionParser()
     parser.add_option("-H", "--host",
@@ -440,15 +440,15 @@ if __name__ == '__main__':
             "[default %s]" % default_port,
         default=default_port)
     
-    parser.add_option("-O", "--source_host",
-        help="host for the source generator " + \
-            "[default %s]" % default_host_source,
-        default=default_host_source)
+    # parser.add_option("-O", "--source_host",
+    #     help="host for the source generator " + \
+    #         "[default %s]" % default_host_source,
+    #     default=default_host_source)
 
-    parser.add_option("-S", "--source_port",
-        help="Port for the source generator " + \
-            "[default %s]" % default_port_source,
-        default=default_port_source)
+    # parser.add_option("-S", "--source_port",
+    #     help="Port for the source generator " + \
+    #         "[default %s]" % default_port_source,
+    #     default=default_port_source)
 
     parser.add_option("-d", "--debug",
         action="store_true", dest="debug",
