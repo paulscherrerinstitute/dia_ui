@@ -1,7 +1,5 @@
 const initialState = {
-    beamEnergy: 5.0,
     problemLoadingConfig: "",
-    statistics_bsread: {"info": {}},
     statistics_ca_dump: {"info": {}},
     statistics_backend: {"info": {}},
     statistics_detector: {"info": {}},
@@ -54,9 +52,6 @@ const initialState = {
 
 const app = (state=initialState, action) => {
     switch (action.type){
-        case 'UPDATE_BEAM':{
-            return {...state, beamEnergy: action.payload};
-        };
         case 'UPDATE_DETECTOR_CONFIG':{
             return {...state, detector_config: action.payload};
         };

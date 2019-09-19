@@ -164,7 +164,7 @@ class ConfigView extends connect(store)(PolymerElement) {
             </vaadin-acoordion>
         </vaadin-vertical-layout>
     </div><!-- card -->
-    <!--div class="card">
+    <div class="card">
         <vaadin-vertical-layout>
             <vaadin-acoordion>
                 <vaadin-accordion-panel disabled id="stats_accordion">
@@ -175,7 +175,7 @@ class ConfigView extends connect(store)(PolymerElement) {
                 </vaadin-accordion-panel>
             </vaadin-acoordion>
         </vaadin-vertical-layout>
-    </div--><!-- card -->
+    </div><!-- card -->
       
     `;
   }

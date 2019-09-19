@@ -122,8 +122,6 @@ class MyApp extends connect(store)(PolymerElement) {
       },
       routeData: Object,
       subroute: Object,
-      todos: {type: Array, value:store.getState().app.todos},
-      beamEnergy: {type: Number, value:  store.getState().app.beamEnergy},
       jsonState: {type: JSON, value:  store.getState().app.myJson}
     };
   }
@@ -164,10 +162,7 @@ class MyApp extends connect(store)(PolymerElement) {
     super.ready();
           //connect to the socket server.
     var socket = io.connect('http://' + document.domain + ':' + location.port);
-    
-    socket.on('newBSREAD', function(msg) {
-      document.querySelector('my-app').newMessage(msg.beam_energy);
-    });
+
 
     socket.on('newStatisticsWriterStart', function(msg) {
       store.dispatch({type:'UPDATE_STATISTICS_WRITER_START', payload:msg});
@@ -223,24 +218,11 @@ class MyApp extends connect(store)(PolymerElement) {
     })
   }
 
-  stateReceiver(state){
-    this.todos = state.app.todos;
-    this.beamEnergy = state.app.beamEnergy;
-  }
-
-  newMessage(msg){
-    store.dispatch({type:'UPDATE_BEAM', payload:msg});
-  }
-
   hideProgressBar(){
     // gets configView from shadowRoot
     const configView = document.querySelector('body > my-app').shadowRoot.querySelector('app-drawer-layout > app-header-layout > iron-pages > config-view')
     configView.hideProgressBar()
     configView.updateControlPanelButtons()
-  }
-
-  removeTodoItem(e){
-    store.dispatch({type:'REMOVE', payload:e.model.index});
   }
 
   getCurrentPage(){
