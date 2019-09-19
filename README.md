@@ -1,5 +1,4 @@
 # DIA User Interface
-
 Detector Integration API User Interface project is a webserver to control, debug and visualize informations related to the Detector Integration API.
 
 It's based on [Python Flask](http://flask.pocoo.org/) and [Polymer 3.0](https://www.polymer-project.org/). It also uses [Socket.io](https://socket.io/) for server-client communication, [Redux](https://redux.js.org/) for information management and [Highcharts.js](https://www.highcharts.com/) for data visualization.
@@ -15,6 +14,7 @@ It's based on [Python Flask](http://flask.pocoo.org/) and [Polymer 3.0](https://
 - Writer logs: /var/log/h5_zmq_writer/ (on xbl-daq-29)
 
 ## Development
+--------------
 - Flask microframework serves per default a static folder, therefore, a symbolic link to the build folder is created. The folder `polymer/build/es6-bundled` is then represented by the `static` and served by the flask server.
 - The files are located in the `polymer` folder and after changes it is necessary to execute (inside the polymer folder)
 
@@ -22,11 +22,7 @@ It's based on [Python Flask](http://flask.pocoo.org/) and [Polymer 3.0](https://
     $ polymer build
     ```
 
-### Prerequisites
-
-You will need [git](www.git.org), [anaconda](https://www.anaconda.com/distribution/), [conda](https://docs.conda.io/en/latest/), [NodeJS](https://nodejs.org/en/), [npm](https://www.npmjs.com/).
-
-### Installing
+## Installing
 
 To try out the DIA User Interface clone the repository and set up the anaconda virtual environment:
 
@@ -78,11 +74,12 @@ To send writer statistics:
 
     $ python writer_stats_zmq_push.py
 
--------------------------
-## Changelog
 
+## Changelog
+-------------------------
 See file `CHANGES.rst`.
 
--------------------------
+
 ## Contact
+-------------------------
 If you have questions, please contact ```leonardo.hax@psi.ch```
