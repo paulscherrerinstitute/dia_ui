@@ -1,0 +1,41 @@
+{% set data = load_setup_py_data() %}
+
+package:
+    name: dia_ui
+    version: {{ data['version'] }}
+
+source:
+    path: ..
+
+requirements:
+  channels:
+      - anaconda
+      - paulscherrerinstitute
+      - conda-forge/label/cf201901
+  build:
+      - python
+      - setuptools
+
+  run:
+      - python
+      - detector_integration_api
+      - conda-forge/label/cf201901:flask-restful
+      - conda-forge/label/cf201901:flask-socketio
+      - conda-forge/label/cf201901:python-socketio
+      - conda-forge/label/cf201901:python-engineio
+      - paulscherrerinstitute:numpy
+      - paulscherrerinstitute:matplotlib
+      - anaconda:flask
+      - anaconda:flask-cors
+
+build:
+  noarch: python
+  number: 2
+  entry_points:
+    - dia_ui = dia_ui.server:main
+
+about:
+    home: https://github.com/paulscherrerinstitute/dia_ui
+    summary: {{ data['description'] }}
+    license: GNU GPLv3
+    license_file: LICENSE
