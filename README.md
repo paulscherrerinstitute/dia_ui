@@ -8,7 +8,7 @@ It's based on [Python Flask](https://palletsprojects.com/p/flask/) and [Polymer 
 
 ## Useful info for users
 
-- Usage address: http://xbl-daq-29:5000
+- DIA User Interface: http://xbl-daq-29:5000
 - Streamvis: http://xbl-daq-29:5006/csaxs
 - [Eiger Manual](http://slsdetectors.web.psi.ch/hardwareDocumentation/Eiger_short.pdf)
 - DIA Address: http://xbl-daq-29:10000
@@ -77,7 +77,7 @@ The files are located in the `polymer` folder and after changes in its source co
 
 Start the python flask webserver:
 
-    $ python server.py -H <HOST> -P <PORT>
+    $ python server.py -H <HOST> -p <PORT>
 
 > **Note**: Default values for `<HOST>`, `<PORT>` are 127.0.0.1 and 5000.
 
@@ -86,23 +86,87 @@ and start the detection integration api debug server, navigate to ```diaui/detec
     $ python start_default_server.py
 
 
-Alternativaly, you can execute the ```start_locally.sh``` script. 
+Alternativaly, you can execute the script located on git's home repository:
 
     $ start_locally.sh
 
-> The ```start_locally.sh``` script automatically configures the terminal into multiple windows and start the python flask webserver and the DIA debug server. 
+> The ```start_locally.sh``` script automatically configures the terminal into multiple windows and start the python flask webserver and the DIA debug server. After that, go to [127.0.0.1:5000](127.0.0.1:5000).
 
 
-### Setting the configuration into the debug server:
+### [TESTING PURPOSES] Setting the configuration into the debug server:
 To set a debug configuration into dia:
 
     $ python set_debug_server_config.py
 
+> It basically verifies if the DIA server is up and running, and sets a initial configuration, displayed below:
 
-### Sending writer statistics:
+    # Define the config for the writer.
+    writer_config = {"output_file": "--",
+                    "n_frames": 0,
+                    "user_id": 10001}
+
+    # Define the config for the backend.
+    backend_config = {"bit_depth": 0,
+                    "n_frames": 0}
+
+    # Define the config for the detector.
+    detector_config = {"period": 0.0,
+                    "frames": 0,
+                    "exptime": 0.0,
+                    "cycles": 0,
+                    "timing": "auto",
+                    "dr": 0}
+
+### [TESTING PURPOSES] Sending writer statistics:
 To send writer statistics:
 
     $ python writer_stats_zmq_push.py
+
+> This scripts sends json formats statistics that are displayed on the web interface using highcharts.js. 
+
+The json statistics from the writer can be of four different formats:
+- Start:
+
+        writerStartJson = {"statistics_wr_start": {
+            "first_frame_id": randint(0, 9),
+            "n_frames": 100,
+            "output_file": "tmp/file_name",
+            "user_id": randint(10000, 999999),
+            "enable": "true",
+            "timestamp": strftime("%Y-%m-%d %H:%M:%S", gmtime()),
+            "compression_method": "comp_name"}
+        }
+
+- Error:
+
+        writerErrorJson ={"statistics_wr_error":  {
+            "error_def": "text",
+            "stack_frame": "text",
+            "enable": "true",
+            "user_msg": "text"}
+        }
+
+
+- Finish:
+
+        writerFinishJson = {"statistics_wr_finish": {
+            "end_time": strftime("%Y-%m-%d %H:%M:%S", gmtime()),
+            "enable": "true",
+            "n_total_written_frames": i}
+        }
+
+- Advanced:
+
+        writerAdvJson ={"statistics_wr_adv": {
+            "n_written_frames": i,
+            "n_received_frames": randint(0, 9),
+            "n_free_slots": randint(0, 9),
+            "enable": "true",
+            "processing_rate": randint(0, 9),
+            "receiving_rate": randint(0, 9),
+            "writting_rate": randint(50, 99),
+            "avg_compressed_size": randint(0, 9)}
+        }
 
 ## Changelog
 -------------------------
