@@ -101,7 +101,7 @@ class ConfigView extends connect(store)(PolymerElement) {
     <div class="card">
       <div class="row">
           <div class="columnLeft">
-              <vaadin-text-field label="DIA API Address" value="http://0.0.0.0:10000" id="det_api_field"></vaadin-text-field>
+              <vaadin-text-field label="DIA API Address" value="xbl-daq-29:10000" id="det_api_field"></vaadin-text-field>
               <paper-tooltip for="det_api_field" position="bottom" animation-delay="0">Address of the DIA interface</paper-tooltip>
           </div><!-- columnLeft -->
           <div class="columnRight">

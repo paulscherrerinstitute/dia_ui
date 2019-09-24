@@ -313,9 +313,9 @@ def get_diaLog(json, methods=['GET', 'POST']):
 
 def main():
     # Default host
-    default_host="127.0.0.1"
+    default_host="0.0.0.0"
     # Default port
-    default_port="5000"
+    default_port="5010"
 
     parser = optparse.OptionParser()
     parser.add_option("-H", "--host",
