@@ -117,8 +117,10 @@ class DiaConfig extends connect(store)(PolymerElement) {
   ready(){
     super.ready();
     var progressBarStatus = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#config_accordion > vaadin-vertical-layout > dia-config").shadowRoot.querySelector("#progress-bar-custom-bounds");
-    progressBarStatus.value = 0;
-    progressBarStatus.removeAttribute("theme");
+    if (progressBarStatus != undefined){
+      progressBarStatus.value = 0;
+      progressBarStatus.removeAttribute("theme");
+    }
   }
 
   connectedCallBack(){
@@ -127,14 +129,14 @@ class DiaConfig extends connect(store)(PolymerElement) {
   } 
 
   stateChanged(state){
-    this.writerconfig_json = state.app.writer_config;   
-    this.detectorconfig_json = state.app.detector_config;   
-    this.backendconfig_json = state.app.backend_config;   
+    this.writerconfig_json = state.app.writer_config;
+    this.detectorconfig_json = state.app.detector_config;
+    this.backendconfig_json = state.app.backend_config;
     this.status_config = state.app.status_config;
     var progressBarStatus = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#config_accordion > vaadin-vertical-layout > dia-config").shadowRoot.querySelector("#progress-bar-custom-bounds");    
-    if (this.status_config.status != "IntegrationStatus.RUNNING"){
-      progressBarStatus.value = 0;
-      progressBarStatus.removeAttribute("theme");
+    if (this.status_config.status != "IntegrationStatus.RUNNING" && progressBarStatus != undefinde){
+        progressBarStatus.value = 0;
+        progressBarStatus.removeAttribute("theme");
     }
   }
 
@@ -191,14 +193,14 @@ class DiaConfig extends connect(store)(PolymerElement) {
     return this.$.status.value;
   }
 
-    
-
   setProgressBarValue(value){
     var progressBarStatus = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#config_accordion > vaadin-vertical-layout > dia-config").shadowRoot.querySelector("#progress-bar-custom-bounds");
-    progressBarStatus.value = value;
-    if (value == 1.0){
-      progressBarStatus.setAttribute("theme","success");
-    };
+    if (progressBarStatus != undefined){
+      progressBarStatus.value = value;
+      if (value == 1.0){
+        progressBarStatus.setAttribute("theme","success");
+      };
+    }
   }
 }
 
