@@ -134,7 +134,7 @@ class DiaConfig extends connect(store)(PolymerElement) {
     this.backendconfig_json = state.app.backend_config;
     this.status_config = state.app.status_config;
     var progressBarStatus = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#config_accordion > vaadin-vertical-layout > dia-config").shadowRoot.querySelector("#progress-bar-custom-bounds");    
-    if (this.status_config.status != "IntegrationStatus.RUNNING" && progressBarStatus != undefinde){
+    if (this.status_config.status != "IntegrationStatus.RUNNING" && progressBarStatus != undefined){
         progressBarStatus.value = 0;
         progressBarStatus.removeAttribute("theme");
     }

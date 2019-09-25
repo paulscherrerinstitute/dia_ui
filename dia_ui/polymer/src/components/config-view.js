@@ -204,79 +204,80 @@ class ConfigView extends connect(store)(PolymerElement) {
   
     // if input field was editted turn load button enabled and disable others
     this.$.det_api_field.addEventListener("change", function(){
-      configView.$.loadConfigButton.removeAttribute("disabled");
-      // closes accordion
-      configView.$.config_accordion.removeAttribute("opened");
-      configView.$.stats_accordion.removeAttribute("opened");
-      // stops the stats monitor
-      const statsConfig = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#stats_accordion > vaadin-vertical-layout > stats-config");
-      statsConfig.stopStatisticsWorker();
-
-      // disables all the other buttons and configuration accordion
-      configView.$.startConfigButton.setAttribute("disabled", "disabled");
-      configView.$.editConfigButton.setAttribute("disabled", "disabled");
-      configView.$.submitConfigButton.setAttribute("disabled", "disabled");
-      configView.$.stopConfigButton.setAttribute("disabled", "disabled");
-      configView.$.resetConfigButton.setAttribute("disabled", "disabled");
-      configView.$.config_accordion.setAttribute("disabled", "disabled");
-      configView.$.stats_accordion.setAttribute("disabled", "disabled");
-      
+      if (configView != undefined){
+        configView.$.loadConfigButton.removeAttribute("disabled");
+        // closes accordion
+        configView.$.config_accordion.removeAttribute("opened");
+        configView.$.stats_accordion.removeAttribute("opened");
+        // stops the stats monitor
+        const statsConfig = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#stats_accordion > vaadin-vertical-layout > stats-config");
+        if (statsConfig != undefined){
+          statsConfig.stopStatisticsWorker();
+        }
+        // disables all the other buttons and configuration accordion
+        configView.$.startConfigButton.setAttribute("disabled", "disabled");
+        configView.$.editConfigButton.setAttribute("disabled", "disabled");
+        configView.$.submitConfigButton.setAttribute("disabled", "disabled");
+        configView.$.stopConfigButton.setAttribute("disabled", "disabled");
+        configView.$.resetConfigButton.setAttribute("disabled", "disabled");
+        configView.$.config_accordion.setAttribute("disabled", "disabled");
+        configView.$.stats_accordion.setAttribute("disabled", "disabled");
+      }
     });
 
     customElements.whenDefined('vaadin-combo-box').then(function() {
       const comboBox = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#det_config_field > vaadin-combo-box");
       const button = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#submitDetConfigButton");
-
-      comboBox.items = ['Eiger9M', 'Eiger4M'];
-
-      button.addEventListener('click', function() {
-        var arraycontainsturtles = (comboBox.items.indexOf(comboBox.value) > -1);
-        if (arraycontainsturtles){
-          notification.open()
-          // submit signal to run detector config script
-          var socket = io.connect('http://' + document.domain + ':' + location.port);
-          socket.emit('setDetectorConfigScript', {'detector_model': comboBox.value, 'det_api_address': configView.det_api_address});
-          console.log(comboBox.value);
-          // disables the field again
-          const checkbox = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("div:nth-child(2) > div > div.columnRight2 > div > vaadin-horizontal-layout > vaadin-checkbox");
-          checkbox.removeAttribute("checked");
-          comboBox.setAttribute("disabled", "disabled");
-          button.setAttribute("disabled", "disabled");
-          // shows notification
-          notification.renderer = function(root) {
-            root.textContent = 'Running detector configuration script on server '+ configView.$.det_api_field.value +'.';
-          };
-        }else{
-          configView.problemStartRequest({'status':'Configuration script not found, please select one of the valid options from the dropdown menu.'}, false);
-        }
-      });
+      if (comboBox != undefined && button != undefined){
+        comboBox.items = ['Eiger9M', 'Eiger4M'];
+        button.addEventListener('click', function() {
+          var arraycontainsturtles = (comboBox.items.indexOf(comboBox.value) > -1);
+          if (arraycontainsturtles){
+            notification.open()
+            // submit signal to run detector config script
+            var socket = io.connect('http://' + document.domain + ':' + location.port);
+            socket.emit('setDetectorConfigScript', {'detector_model': comboBox.value, 'det_api_address': configView.det_api_address});
+            console.log(comboBox.value);
+            // disables the field again
+            const checkbox = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("div:nth-child(2) > div > div.columnRight2 > div > vaadin-horizontal-layout > vaadin-checkbox");
+            checkbox.removeAttribute("checked");
+            comboBox.setAttribute("disabled", "disabled");
+            button.setAttribute("disabled", "disabled");
+            // shows notification
+            notification.renderer = function(root) {
+              root.textContent = 'Running detector configuration script on server '+ configView.$.det_api_field.value +'.';
+            };
+          }else{
+            configView.problemStartRequest({'status':'Configuration script not found, please select one of the valid options from the dropdown menu.'}, false);
+          }
+        });
+      }
     });
 
     customElements.whenDefined('vaadin-checkbox').then(function() {
       const checkbox = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("div:nth-child(2) > div > div.columnRight2 > div > vaadin-horizontal-layout > vaadin-checkbox");
-  
-      checkbox.addEventListener('click', function(event) {
-        notification.open()
-        const comboBox = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#det_config_field > vaadin-combo-box");
-        const button = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#submitDetConfigButton");
-        var checkBoxValue = checkbox.getAttribute("aria-checked");
-        if (checkBoxValue == "false"){
-          comboBox.setAttribute("disabled", "disabled")
-          button.setAttribute("disabled", "disabled")
-          notification.renderer = function(root) {
-            root.textContent = 'Disabling the detector configuration panel.';
-          };
-        }else{
-          comboBox.removeAttribute("disabled")
-          button.removeAttribute("disabled")
-          notification.renderer = function(root) {
-            root.textContent = 'Enabling the detector configuration panel.';
-          };
-        }
-      });
+      if (checkbox != undefined){
+        checkbox.addEventListener('click', function(event) {
+          notification.open()
+          const comboBox = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#det_config_field > vaadin-combo-box");
+          const button = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#submitDetConfigButton");
+          var checkBoxValue = checkbox.getAttribute("aria-checked");
+          if (checkBoxValue == "false"){
+            comboBox.setAttribute("disabled", "disabled")
+            button.setAttribute("disabled", "disabled")
+            notification.renderer = function(root) {
+              root.textContent = 'Disabling the detector configuration panel.';
+            };
+          }else{
+            comboBox.removeAttribute("disabled")
+            button.removeAttribute("disabled")
+            notification.renderer = function(root) {
+              root.textContent = 'Enabling the detector configuration panel.';
+            };
+          }
+        });
+      }
     });
-
-    
 
     // enter pressed while input field was focused -> loads config
     this.$.det_api_field.addEventListener('keypress', function (e) {
