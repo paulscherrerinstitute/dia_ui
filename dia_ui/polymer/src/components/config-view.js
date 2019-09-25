@@ -200,8 +200,9 @@ class ConfigView extends connect(store)(PolymerElement) {
     // requests configuration from server
     const socket = io.connect('http://' + document.domain + ':' + location.port);
     // gets configView from shadowRoot
+    console.log('1')
     const configView = document.querySelector('body > my-app').shadowRoot.querySelector('app-drawer-layout > app-header-layout > iron-pages > config-view');
-  
+    console.log('2')
     // if input field was editted turn load button enabled and disable others
     this.$.det_api_field.addEventListener("change", function(){
       if (configView != undefined){
@@ -211,6 +212,7 @@ class ConfigView extends connect(store)(PolymerElement) {
         configView.$.stats_accordion.removeAttribute("opened");
         // stops the stats monitor
         const statsConfig = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#stats_accordion > vaadin-vertical-layout > stats-config");
+        console.log('3')
         if (statsConfig != undefined){
           statsConfig.stopStatisticsWorker();
         }
@@ -227,7 +229,9 @@ class ConfigView extends connect(store)(PolymerElement) {
 
     customElements.whenDefined('vaadin-combo-box').then(function() {
       const comboBox = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#det_config_field > vaadin-combo-box");
+      console.log('4')
       const button = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#submitDetConfigButton");
+      console.log('5')
       if (comboBox != undefined && button != undefined){
         comboBox.items = ['Eiger9M', 'Eiger4M'];
         button.addEventListener('click', function() {
@@ -240,6 +244,7 @@ class ConfigView extends connect(store)(PolymerElement) {
             console.log(comboBox.value);
             // disables the field again
             const checkbox = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("div:nth-child(2) > div > div.columnRight2 > div > vaadin-horizontal-layout > vaadin-checkbox");
+            console.log('6')
             checkbox.removeAttribute("checked");
             comboBox.setAttribute("disabled", "disabled");
             button.setAttribute("disabled", "disabled");
@@ -256,11 +261,13 @@ class ConfigView extends connect(store)(PolymerElement) {
 
     customElements.whenDefined('vaadin-checkbox').then(function() {
       const checkbox = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("div:nth-child(2) > div > div.columnRight2 > div > vaadin-horizontal-layout > vaadin-checkbox");
+      console.log('7')
       if (checkbox != undefined){
         checkbox.addEventListener('click', function(event) {
           notification.open()
           const comboBox = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#det_config_field > vaadin-combo-box");
           const button = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#submitDetConfigButton");
+          console.log('8')
           var checkBoxValue = checkbox.getAttribute("aria-checked");
           if (checkBoxValue == "false"){
             comboBox.setAttribute("disabled", "disabled")
