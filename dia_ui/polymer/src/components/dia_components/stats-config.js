@@ -218,7 +218,9 @@ class StatsConfig extends connect(store)(PolymerElement) {
       errorTab.removeAttribute("disabled");
       // turns progress bar to red
       var progressBarStatus = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#config_accordion > vaadin-vertical-layout > dia-config").shadowRoot.querySelector("#progress-bar-custom-bounds");
-      progressBarStatus.setAttribute("theme","error");
+      if (progressBarStatus != undefined){
+        progressBarStatus.setAttribute("theme","error");
+      }
     }
     // enables/disables the finish tab
     if (this.statistics_wr_finish.enable == false){

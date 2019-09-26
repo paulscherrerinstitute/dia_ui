@@ -67,10 +67,10 @@ class DiaConfig extends connect(store)(PolymerElement) {
             <vaadin-text-field id="status" label="Status" theme="small" value=[[status_config.status]] readonly></vaadin-text-field>
             <div>
               <span style="align-self: flex-start;color: var(--lumo-secondary-text-color);font-weight: 400;font-size: var(--lumo-font-size-xs);margin-left: calc(var(--lumo-border-radius-m) / 4);transition: color 0.2s;line-height: 1;padding-bottom: 0.5em;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;position: relative;max-width: 100%;box-sizing: border-box;">Progress</span>
-              <vaadin-progress-bar disabled id="progress-bar-custom-bounds" min="0" max="1"></vaadin-progress-bar>
+              <!--vaadin-progress-bar disabled id="progress-bar-custom-bounds" min="0" max="1"></vaadin-progress-bar-->
             </div>
           </vaadin-form-layout>
-        </div> 
+        </div>
         <div class="column">
           <h2>Writer</h2>
           <vaadin-form-layout>
@@ -117,6 +117,7 @@ class DiaConfig extends connect(store)(PolymerElement) {
   ready(){
     super.ready();
     var progressBarStatus = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#config_accordion > vaadin-vertical-layout > dia-config").shadowRoot.querySelector("#progress-bar-custom-bounds");
+    console.log(progressBarStatus)
     if (progressBarStatus != undefined){
       progressBarStatus.value = 0;
       progressBarStatus.removeAttribute("theme");
@@ -133,7 +134,7 @@ class DiaConfig extends connect(store)(PolymerElement) {
     this.detectorconfig_json = state.app.detector_config;
     this.backendconfig_json = state.app.backend_config;
     this.status_config = state.app.status_config;
-    var progressBarStatus = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#config_accordion > vaadin-vertical-layout > dia-config").shadowRoot.querySelector("#progress-bar-custom-bounds");    
+    var progressBarStatus = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#config_accordion > vaadin-vertical-layout > dia-config").shadowRoot.querySelector("#progress-bar-custom-bounds");
     if (this.status_config.status != "IntegrationStatus.RUNNING" && progressBarStatus != undefined){
         progressBarStatus.value = 0;
         progressBarStatus.removeAttribute("theme");
@@ -185,7 +186,7 @@ class DiaConfig extends connect(store)(PolymerElement) {
 
   getBackendConfig(){
     const backend_config = {'bit_depth': this.$.bitdepth.value,
-        'n_frames': this.$.n_frames.value}; 
+        'n_frames': this.$.n_frames.value};
     return backend_config;
   }
 
