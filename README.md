@@ -175,4 +175,4 @@ See file `CHANGES.rst`.
 
 ## Contact
 -------------------------
-If you have questions, please contact ```leonardo.hax@psi.ch```
+If you have questions, contact ```leonardo.hax@psi.ch```
