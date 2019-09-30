@@ -12,6 +12,7 @@ It's based on [Python Flask](https://palletsprojects.com/p/flask/) and [Polymer 
 - Streamvis: http://xbl-daq-29:5006/csaxs
 - [Eiger Manual](http://slsdetectors.web.psi.ch/hardwareDocumentation/Eiger_short.pdf)
 - DIA Address: http://xbl-daq-29:10000
+- DIA repo: https://github.com/paulscherrerinstitute/csaxs_dia
 - Backend address: xbl-daq-28
 - Writer logs: /var/log/h5_zmq_writer/ (on xbl-daq-29)
 

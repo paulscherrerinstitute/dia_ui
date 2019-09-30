@@ -91,9 +91,8 @@ def set_detector_config(json, methods=['GET', 'POST']):
     # gets which script file to run
     det_model = json['detector_model']
     try:
-        # runs the set detector config with the desired configuration model
-        #TODO 
-        os.system("sh run_detector_config.sh "+det_model)
+        import subprocess
+        subprocess.call('/home/dia_ui/set_det_config.sh '+det_model)
     except Exception as e:
         # emits problem
         socketio.emit('problemWithRequest', {'status':'{0}'.format(e), 'start_dia_option':'no'})
@@ -106,9 +105,8 @@ def set_detector_config(json, methods=['GET', 'POST']):
 @socketio.on('emitStartDiaService')
 def start_dia_script(json, methods=['GET', 'POST']):
     try:
-        # starts dia service #TODO
-        #os.system("systemctl start dia.service")
-        os.system("sh start_dia.sh")
+        import subprocess
+        subprocess.call('/home/dia_ui/start_dia.sh')
     except Exception as e:
         # emits problem
         socketio.emit('problemWithRequest', {'status':'{0}'.format(e), 'start_dia_option':'no'})
@@ -214,16 +212,25 @@ def get_diaConfig(json, methods=['GET', 'POST']):
 
 @socketio.on('requestDiaLog')
 def get_diaLog(json, methods=['GET', 'POST']):
-    #TODO
-    dia_log_file = Path("./dia_service.log")
-    if dia_log_file.is_file() and len(open(dia_log_file, 'r').read()) > 0:
-        diaLogContent = open(dia_log_file, 'r').read()
-        # emits writer start configuration
-        socketio.emit('sendingDiaLog', diaLogContent)
+    try:
+        # runs the service that converts the journalctl to a txt file
+        import subprocess
+        subprocess.call('/home/dia_ui/get_dia_log.sh')
+        dia_log_file = Path("/home/dia_ui/dia.log")
+    except Exception as e:
+        # emits problem
+        socketio.emit('problemWithRequest', {'status':'{0}'.format(e), 'start_dia_option':'yes'})
         # emits finished request
         socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
-    else:
-        socketio.emit('problemWithRequest', {'status':'Dia log file does not exists or it is empty.', 'start_dia_option':'no'})
+    else:    
+        if dia_log_file.is_file() and len(open(dia_log_file, 'r').read()) > 0:
+            diaLogContent = open(dia_log_file, 'r').read()
+            # emits writer start configuration
+            socketio.emit('sendingDiaLog', diaLogContent)
+            # emits finished request
+            socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
+        else:
+            socketio.emit('problemWithRequest', {'status':'Dia log file does not exists or it is empty.', 'start_dia_option':'no'})
 
 
 # @socketio.on('emitClearStatisticsBuffer')
