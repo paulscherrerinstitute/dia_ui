@@ -216,6 +216,7 @@ def get_diaLog(json, methods=['GET', 'POST']):
         # runs the service that converts the journalctl to a txt file
         import subprocess
         subprocess.call('/home/dia_ui/get_dia_log.sh')
+        time.sleep(2)
         dia_log_file = Path("/home/dia_ui/dia.log")
     except Exception as e:
         # emits problem
