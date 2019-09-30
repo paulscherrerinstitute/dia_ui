@@ -92,7 +92,7 @@ def set_detector_config(json, methods=['GET', 'POST']):
     det_model = json['detector_model']
     try:
         import subprocess
-        subprocess.call('/home/dia_ui/set_det_config.sh '+det_model)
+        subprocess.call(["/home/dia_ui/set_det_config.sh", str(det_model)])
     except Exception as e:
         # emits problem
         socketio.emit('problemWithRequest', {'status':'{0}'.format(e), 'start_dia_option':'no'})
@@ -215,8 +215,8 @@ def get_diaLog(json, methods=['GET', 'POST']):
     try:
         # runs the service that converts the journalctl to a txt file
         import subprocess
+        from pathlib import Path
         subprocess.call('/home/dia_ui/get_dia_log.sh')
-        time.sleep(2)
         dia_log_file = Path("/home/dia_ui/dia.log")
     except Exception as e:
         # emits problem
