@@ -4,7 +4,7 @@ new_tab_right(){
     osascript \
     -e 'tell application "iTerm" to activate' \
     -e 'tell application "System Events" to tell process "iTerm" to keystroke "d" using command down' \
-    -e 'tell application "System Events" to tell process "iTerm" to keystroke "cd Software/diaui/polymer"' \
+    -e 'tell application "System Events" to tell process "iTerm" to keystroke "cd Software/dia_ui/polymer"' \
     -e 'tell application "System Events" to tell process "iTerm" to key code 52'
 }
 
@@ -12,7 +12,7 @@ new_tab_bottom(){
     osascript \
     -e 'tell application "iTerm" to activate' \
     -e 'tell application "System Events" to tell process "iTerm" to keystroke "d" using {command down, shift down}' \
-    -e 'tell application "System Events" to tell process "iTerm" to keystroke "cd Software/diaui"' \
+    -e 'tell application "System Events" to tell process "iTerm" to keystroke "cd Software/dia_ui"' \
     -e 'tell application "System Events" to tell process "iTerm" to key code 52'
 }
 
@@ -24,11 +24,11 @@ load_conda(){
     -e 'tell application "System Events" to tell process "iTerm" to key code 52'
 }
 
-# activate diaui environment
-activate_diaui(){
+# activate dia_ui environment
+activate_dia_ui(){
     osascript \
     -e 'tell application "iTerm" to activate' \
-    -e 'tell application "System Events" to tell process "iTerm" to keystroke "conda activate /anaconda3/envs/diaui"' \
+    -e 'tell application "System Events" to tell process "iTerm" to keystroke "conda activate /anaconda3/envs/dia_ui"' \
     -e 'tell application "System Events" to tell process "iTerm" to key code 52'
 }
 
@@ -78,18 +78,18 @@ move_focus_to_top(){
 }   
 
 load_conda
-activate_diaui
+activate_dia_ui
 new_tab_bottom
 load_conda
-activate_diaui
+activate_dia_ui
 start_detector_debug_server
 new_tab_right
 load_conda
-activate_diaui
+activate_dia_ui
 sets_debug_server_config
 start_bsread_stream
 new_tab_bottom
 load_conda
-activate_diaui
+activate_dia_ui
 start_flaskserver
 move_focus_to_top
