@@ -65,10 +65,10 @@ class DiaConfig extends connect(store)(PolymerElement) {
           <vaadin-form-layout>
             <vaadin-text-field id="state" label="State" theme="small" value=[[status_config.state]] readonly></vaadin-text-field>
             <vaadin-text-field id="status" label="Status" theme="small" value=[[status_config.status]] readonly></vaadin-text-field>
-            <div>
+            <!--div>
               <span style="align-self: flex-start;color: var(--lumo-secondary-text-color);font-weight: 400;font-size: var(--lumo-font-size-xs);margin-left: calc(var(--lumo-border-radius-m) / 4);transition: color 0.2s;line-height: 1;padding-bottom: 0.5em;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;position: relative;max-width: 100%;box-sizing: border-box;">Progress</span>
-              <!--vaadin-progress-bar disabled id="progress-bar-custom-bounds" min="0" max="1"></vaadin-progress-bar-->
-            </div>
+              <vaadin-progress-bar disabled id="progress-bar-custom-bounds" min="0" max="1"></vaadin-progress-bar>
+            </div-->
           </vaadin-form-layout>
         </div>
         <div class="column">
