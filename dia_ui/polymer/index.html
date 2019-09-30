@@ -90,6 +90,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       //   });
       // }
+      // Detect firefox browser and indicate to use google chrome
     </script>
 
     <!-- Load webcomponents-loader.js to check and load any polyfills your browser needs -->
@@ -111,6 +112,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
   </head>
   <body>
+    <vaadin-dialog id="dialog_outdated_broswer" no-close-on-esc no-close-on-outside-click></vaadin-dialog>
     <my-app></my-app>
     
     <noscript>
@@ -128,6 +130,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           NODE_ENV: 'production'
         }
       };
+      if(navigator.userAgent.indexOf("Firefox") != -1 ){
+        customElements.whenDefined('vaadin-dialog').then(function() {
+        dialog = document.querySelector("#dialog_outdated_broswer");
+        dialog.renderer = function(root, dialog) {
+          // Check if there is a DOM generated with the previous renderer call to update its content instead of recreation
+          if (root.firstElementChild) {
+            return;
+          }
+          const div = window.document.createElement('div');
+          var match = window.navigator.userAgent.match(/Firefox\/([0-9]+)\./);
+          var ver = match ? parseInt(match[1]) : 0;
+          div.textContent = "Current version of your browser ("+ match+") is currently not supported. Please use Google Chrome.";
+          const br = window.document.createElement('br');
+          root.appendChild(div);
+          root.appendChild(br);
+        };
+        dialog.opened = true;
+        }); 
+      }
     
     </script>
     

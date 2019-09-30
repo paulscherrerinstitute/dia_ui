@@ -199,7 +199,6 @@ class ConfigView extends connect(store)(PolymerElement) {
     // requests configuration from server
     const socket = io.connect('http://' + document.domain + ':' + location.port);
     // gets configView from shadowRoot
-    console.log('ready configview')
     const configView = document.querySelector('body > my-app').shadowRoot.querySelector('app-drawer-layout > app-header-layout > iron-pages > config-view');
     // if input field was editted turn load button enabled and disable others
     this.$.det_api_field.addEventListener("change", function(){

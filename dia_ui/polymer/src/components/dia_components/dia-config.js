@@ -117,7 +117,6 @@ class DiaConfig extends connect(store)(PolymerElement) {
   ready(){
     super.ready();
     var progressBarStatus = document.querySelector("body > my-app").shadowRoot.querySelector("app-drawer-layout > app-header-layout > iron-pages > config-view").shadowRoot.querySelector("#config_accordion > vaadin-vertical-layout > dia-config").shadowRoot.querySelector("#progress-bar-custom-bounds");
-    console.log(progressBarStatus)
     if (progressBarStatus != undefined){
       progressBarStatus.value = 0;
       progressBarStatus.removeAttribute("theme");
