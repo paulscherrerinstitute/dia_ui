@@ -93,6 +93,9 @@ def set_detector_config(json, methods=['GET', 'POST']):
     try:
         import subprocess
         subprocess.call(["/home/dia_ui/set_det_config.sh", str(det_model)])
+        # command = "/home/dia_ui/set_det_config.sh "+str(det_model)
+        # p = subprocess.Popen(command, shell=True, bufsize=0, stdout=subprocess.PIPE, universal_newlines=True)
+        # p.wait()
     except Exception as e:
         # emits problem
         socketio.emit('problemWithRequest', {'status':'{0}'.format(e), 'start_dia_option':'no'})
@@ -217,6 +220,9 @@ def get_diaLog(json, methods=['GET', 'POST']):
         import subprocess
         from pathlib import Path
         subprocess.call('/home/dia_ui/get_dia_log.sh')
+        command = '/home/dia_ui/get_dia_log.sh'
+        p = subprocess.Popen(command, shell=True, bufsize=0, universal_newlines=True)
+        p.wait()
         dia_log_file = Path("/home/dia_ui/dia.log")
     except Exception as e:
         # emits problem
