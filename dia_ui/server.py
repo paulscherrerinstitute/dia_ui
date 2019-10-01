@@ -236,9 +236,8 @@ def get_diaLog(json, methods=['GET', 'POST']):
             # diaLogContent = open(dia_log_file, 'r')
             with open(dia_log_file, 'r') as f:
                 data = f.readlines()
-            
             # emits writer start configuration
-            socketio.emit('sendingDiaLog', data[-50:])
+            socketio.emit('sendingDiaLog', data[-250:])
             # emits finished request
             socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
         else:
