@@ -198,7 +198,7 @@ def get_diaConfig(json, methods=['GET', 'POST']):
         jsonConfig = client.get_config()
     except Exception as e:
         # emits problem
-        socketio.emit('problemWithRequest', {'status':'{0}'.format(e), 'start_dia_option':'yes'})
+        socketio.emit('problemWithRequest', {'status':'{0}'.format(e), 'start_dia_option':'no'})
         # emits finished request
         socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
     else:
@@ -220,7 +220,6 @@ def get_diaLog(json, methods=['GET', 'POST']):
         import subprocess, time
         from pathlib import Path
         import os
-        print(os.getcwd())
         command = "journalctl -u dia.service > /home/dia_ui/dia.log"
         p = subprocess.Popen(command, shell=True, bufsize=0, stdout=subprocess.PIPE, universal_newlines=True)
         p.wait()
