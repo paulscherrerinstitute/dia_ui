@@ -233,7 +233,7 @@ def get_diaLog(json, methods=['GET', 'POST']):
     else:    
         if dia_log_file.is_file() and len(open(dia_log_file, 'r').read()) > 0:
             # diaLogContent = open(dia_log_file, 'r').read()
-            diaLogContent = tail(dia_log_file, lines=100)
+            diaLogContent = tail(File("/home/dia_ui/dia.log"), lines=100)
             # emits writer start configuration
             socketio.emit('sendingDiaLog', diaLogContent)
             # emits finished request
