@@ -221,10 +221,9 @@ def get_diaLog(json, methods=['GET', 'POST']):
         from pathlib import Path
         import os
         print(os.getcwd())
-        command = "sudo journalctl -u dia.service > /home/dia_ui/dia.log"
+        command = "journalctl -u dia.service > /home/dia_ui/dia.log"
         p = subprocess.Popen(command, shell=True, bufsize=0, stdout=subprocess.PIPE, universal_newlines=True)
         p.wait()
-        time.sleep(2)
         dia_log_file = Path("/home/dia_ui/dia.log")
     except Exception as e:
         # emits problem
