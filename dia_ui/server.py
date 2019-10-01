@@ -219,10 +219,7 @@ def get_diaLog(json, methods=['GET', 'POST']):
         # runs the service that converts the journalctl to a txt file
         import subprocess
         from pathlib import Path
-        subprocess.call('/home/dia_ui/get_dia_log.sh')
-        command = '/home/dia_ui/get_dia_log.sh'
-        p = subprocess.Popen(command, shell=True, bufsize=0, universal_newlines=True)
-        p.wait()
+        subprocess.call(["sudo journalctl -u dia.service > /home/dia_ui/dia.log"])
         dia_log_file = Path("/home/dia_ui/dia.log")
     except Exception as e:
         # emits problem
