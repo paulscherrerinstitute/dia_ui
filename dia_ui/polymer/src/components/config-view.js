@@ -39,12 +39,13 @@ class ConfigView extends connect(store)(PolymerElement) {
         display: block;
         padding: 10px;
     }
-    :host([theme~="error"]) [part="overlay"] {
-        background-color: white;
-      }
-    
+
     #det_api_field {
         width: 100%;
+    }
+
+    .dialog-message {
+      background-color:white;
     }
 
     #containerContent {
@@ -113,7 +114,7 @@ class ConfigView extends connect(store)(PolymerElement) {
                       <label part="label" id="vaadin-text-field-label-1">DIA Control panel</label>
                       <vaadin-progress-bar hidden id="progressBar" indeterminate value="0" style="float:right;margin-right: calc(var(--lumo-border-radius-m) / 4);max-width: 65%;"></vaadin-progress-bar>
                       <div part="error-message" aria-live="assertive" aria-hidden="true" id="vaadin-text-field-error-1"></div>
-                      <vaadin-dialog id="dialog" no-close-on-esc no-close-on-outside-click theme="error"></vaadin-dialog>
+                      <vaadin-dialog id="dialog" no-close-on-esc no-close-on-outside-click></vaadin-dialog>
                   </vaadin-horizontal-layout>
               </div> <!-- vaadin-text-field-container -->
               <vaadin-horizontal-layout id="control_panel_field">
@@ -572,6 +573,7 @@ class ConfigView extends connect(store)(PolymerElement) {
         return;
       };
       const div = window.document.createElement('div');
+      div.className += ' dialog-message'
       div.textContent = msg['status'];
       const configView = document.querySelector('body > my-app').shadowRoot.querySelector('app-drawer-layout > app-header-layout > iron-pages > config-view');
 
