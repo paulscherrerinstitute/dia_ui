@@ -201,7 +201,10 @@ def get_diaConfig(json, methods=['GET', 'POST']):
         jsonConfig = client.get_config()
     except Exception as e:
         # emits problem
-        socketio.emit('problemWithRequest', {'status':'{0}'.format(e), 'start_dia_option':'yes'})
+        if "Failed to establish a new connection" in e:
+            socketio.emit('problemWithRequest', {'status':'{0}'.format(e), 'start_dia_option':'yes'})
+        else:
+            socketio.emit('problemWithRequest', {'status':'{0}'.format(e), 'start_dia_option':'no'})
         # emits finished request
         socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
     else:
