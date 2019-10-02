@@ -121,6 +121,9 @@ define(["exports","./my-app.js"],function(_exports,_myApp){"use strict";Object.d
           display: block;
           padding: 10px;
         }
+        :host([theme~="error"]) [part="overlay"] {
+        background-color: white;
+        }
 
         #det_api_field{
           width:100%;

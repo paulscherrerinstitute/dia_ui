@@ -39,11 +39,14 @@ class ConfigView extends connect(store)(PolymerElement) {
         display: block;
         padding: 10px;
     }
+    :host([theme~="error"]) [part="overlay"] {
+        background-color: white;
+      }
     
     #det_api_field {
         width: 100%;
     }
-    
+
     #containerContent {
         height: 100%;
         width: 100%;
@@ -634,6 +637,7 @@ class ConfigView extends connect(store)(PolymerElement) {
         }
       }
     };
+    
     dialog.opened = true;
   });
 

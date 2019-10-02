@@ -37,8 +37,7 @@ class LogView extends connect(store)(PolymerElement) {
           padding: 10px;
         }
         :host([theme~="error"]) [part="overlay"] {
-        background-color: hsl(3, 100%, 61%);
-        color: #fff;
+        background-color: white;
         }
 
         #det_api_field{
