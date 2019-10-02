@@ -16,7 +16,7 @@ new_tab_bottom(){
     -e 'tell application "System Events" to tell process "iTerm" to key code 52'
 }
 
-# loads the conda 
+# loads the conda
 load_conda(){
     osascript \
     -e 'tell application "iTerm" to activate' \

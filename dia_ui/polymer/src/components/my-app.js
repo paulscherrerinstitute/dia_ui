@@ -86,9 +86,8 @@ class MyApp extends connect(store)(PolymerElement) {
         <app-drawer id="drawer" slot="drawer" swipe-open="[[narrow]]">
           <app-toolbar>Menu</app-toolbar>
           <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-            
             <a id="DiaConfig" name="config" href="[[rootPath]]config">Dashboard</a>
-            <a id="LogViewer" name="logView" href="[[rootPath]]logView">Log viewer</a>
+            <a id="LogViewer" name="logView" href="[[rootPath]]logView">DIA Log</a>
           </iron-selector>
           <div id="containerHigh"></div>
         </app-drawer>

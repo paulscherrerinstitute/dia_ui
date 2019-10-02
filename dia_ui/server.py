@@ -1,5 +1,6 @@
 import optparse, os, sys
-
+import subprocess, time
+from pathlib import Path
 from detector_integration_api import DetectorIntegrationClient
 
 from pathlib import Path
@@ -33,7 +34,7 @@ def page_not_found(error):
 
 @socketio.on('newConfigurationFromClient')
 def new_config_from_client(json, methods=['GET', 'POST']):
-    api_det_address = json['det_api_address']
+    api_det_address = json['det_api_address'].strip()
     # created the detector integration client object with the address of interest
     client = DetectorIntegrationClient(api_det_address)
     # sets new configuration
@@ -61,7 +62,7 @@ def new_config_from_client(json, methods=['GET', 'POST']):
 
 @socketio.on('emitStop')
 def stop_from_client(json, methods=['GET', 'POST']):
-    api_det_address = json['det_api_address']
+    api_det_address = json['det_api_address'].strip()
     # created the detector integration client object with the address of interest
     client = DetectorIntegrationClient(api_det_address)
     # stopping the client
@@ -109,7 +110,9 @@ def set_detector_config(json, methods=['GET', 'POST']):
 def start_dia_script(json, methods=['GET', 'POST']):
     try:
         import subprocess
-        subprocess.call('/home/dia_ui/start_dia.sh')
+        command = "/home/dia_ui/start_dia.sh"
+        p = subprocess.Popen(command, shell=True, bufsize=0, stdout=subprocess.PIPE, universal_newlines=True)
+        p.wait()
     except Exception as e:
         # emits problem
         socketio.emit('problemWithRequest', {'status':'{0}'.format(e), 'start_dia_option':'no'})
@@ -117,7 +120,7 @@ def start_dia_script(json, methods=['GET', 'POST']):
         socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
     else:
         # Dia now running
-        api_det_address = json['det_api_address']
+        api_det_address = json['det_api_address'].strip()
         # created the detector integration client object with the address of interest
         client = DetectorIntegrationClient(api_det_address)
         jsonConfig = client.get_config()
@@ -135,7 +138,7 @@ def start_dia_script(json, methods=['GET', 'POST']):
 
 @socketio.on('emitStart')
 def start_from_client(json, methods=['GET', 'POST']):
-    api_det_address = json['det_api_address']
+    api_det_address = json['det_api_address'].strip()
     # created the detector integration client object with the address of interest
     client = DetectorIntegrationClient(api_det_address)
     # starting the client
@@ -162,7 +165,7 @@ def start_from_client(json, methods=['GET', 'POST']):
 
 @socketio.on('emitReset')
 def start_from_client(json, methods=['GET', 'POST']):
-    api_det_address = json['det_api_address']
+    api_det_address = json['det_api_address'].strip()
     # created the detector integration client object with the address of interest
     client = DetectorIntegrationClient(api_det_address)
     # reseting the client
@@ -190,7 +193,7 @@ def start_from_client(json, methods=['GET', 'POST']):
 @socketio.on('emitLoad')
 def get_diaConfig(json, methods=['GET', 'POST']):
     # gets address value from the detector api of interest
-    api_det_address = json['det_api_address']
+    api_det_address = json['det_api_address'].strip()
     # created the detector integration client object with the address of interest
     client = DetectorIntegrationClient(api_det_address)
     # get configuration from server
@@ -198,7 +201,7 @@ def get_diaConfig(json, methods=['GET', 'POST']):
         jsonConfig = client.get_config()
     except Exception as e:
         # emits problem
-        socketio.emit('problemWithRequest', {'status':'{0}'.format(e), 'start_dia_option':'no'})
+        socketio.emit('problemWithRequest', {'status':'{0}'.format(e), 'start_dia_option':'yes'})
         # emits finished request
         socketio.emit('finishedRequestSuccessfully', {'status':'ok'})
     else:
@@ -217,9 +220,6 @@ def get_diaConfig(json, methods=['GET', 'POST']):
 def get_diaLog(json, methods=['GET', 'POST']):
     try:
         # runs the service that converts the journalctl to a txt file
-        import subprocess, time
-        from pathlib import Path
-        import os
         command = "journalctl -u dia.service > /home/dia_ui/dia.log"
         p = subprocess.Popen(command, shell=True, bufsize=0, stdout=subprocess.PIPE, universal_newlines=True)
         p.wait()
@@ -245,7 +245,7 @@ def get_diaLog(json, methods=['GET', 'POST']):
 # @socketio.on('emitClearStatisticsBuffer')
 # def clearStatisticsBuffer(json, methods=['GET', 'POST']):
 #     # gets address value from the detector api of interest
-#     api_det_address = json['det_api_address']
+#     api_det_address = json['det_api_address'].strip()
 #     # created the detector integration client object with the address of interest
 #     client = DetectorIntegrationClient(api_det_address)
 #     try:
@@ -262,7 +262,7 @@ def get_diaLog(json, methods=['GET', 'POST']):
 # @socketio.on('emitGetStatisticsStart')
 # def get_StatisticsStart(json, methods=['GET', 'POST']):
 #     # gets address value from the detector api of interest
-#     api_det_address = json['det_api_address']
+#     api_det_address = json['det_api_address'].strip()
 #     # created the detector integration client object with the address of interest
 #     client = DetectorIntegrationClient(api_det_address)
 #     # get configuration from server
@@ -288,7 +288,7 @@ def get_diaLog(json, methods=['GET', 'POST']):
 # @socketio.on('emitGetStatistics')
 # def get_Statistics(json, methods=['GET', 'POST']):
 #     # gets address value from the detector api of interest
-#     api_det_address = json['det_api_address']
+#     api_det_address = json['det_api_address'].strip()
 #     # created the detector integration client object with the address of interest
 #     client = DetectorIntegrationClient(api_det_address)
 #     # get configuration from server

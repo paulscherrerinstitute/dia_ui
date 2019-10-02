@@ -1,5 +1,4 @@
 # build and dependencies
-build/
 node_modules/
 detector_integration_api/
 # macos custom atributes
