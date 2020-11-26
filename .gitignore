@@ -10,3 +10,8 @@ detector_integration_api/
 *.pyc
 # log files
 *.log
+.DS_Store
+node_modules/
+/dist/
+env/
+__pycache__
