@@ -106,10 +106,11 @@ def load_dia_status(client):
         jsonConfig = client.get_status_details()
     except Exception as e:
         print(e)
-    # updates statuses
-    update_statuses(jsonConfig)
-    # returns the updated config to the front end
-    return jsonify(COMPONENTS)
+    else:
+        # updates statuses
+        update_statuses(jsonConfig)
+        # returns the updated config to the front end
+        return jsonify(COMPONENTS)
 
 def load_dia_config(client):
     # get configuration from server
@@ -117,16 +118,17 @@ def load_dia_config(client):
         jsonConfig = client.get_config()
     except Exception as e:
         print(e)
-    # updates dia
-    update_dia(jsonConfig['state'], jsonConfig['status'])
-    # updates writer
-    update_writer_config(jsonConfig['config'].get('writer'))
-    # updates backend
-    update_backend_config(jsonConfig['config'].get('backend'))
-    # updates detector
-    update_backend_config(jsonConfig['config'].get('detector'))
-    # returns the updated config to the front end
-    return jsonify(COMPONENTS)
+    else:
+        # updates dia
+        update_dia(jsonConfig['state'], jsonConfig['status'])
+        # updates writer
+        update_writer_config(jsonConfig['config'].get('writer'))
+        # updates backend
+        update_backend_config(jsonConfig['config'].get('backend'))
+        # updates detector
+        update_backend_config(jsonConfig['config'].get('detector'))
+        # returns the updated config to the front end
+        return jsonify(COMPONENTS)
 
 # sanity check route
 @app.route('/ping', methods=['GET'])

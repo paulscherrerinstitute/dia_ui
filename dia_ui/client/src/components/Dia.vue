@@ -31,12 +31,10 @@
             <b-card bg-variant="light">
               <h6>DETECTOR CONTROL PANEL</h6>
               <button type="button"
-                      disabled
                       class="btn btn-secondary btn-sm"
                       style="margin:2px;"
                       v-on:click="onDetControlPanelClick($event)">Ping</button>
               <button type="button"
-                      disabled
                       class="btn btn-secondary btn-sm"
                       style="margin:2px;"
                       v-on:click="onDetControlPanelClick($event)">Configure</button>

@@ -30,7 +30,7 @@ requirements:
 
 build:
   noarch: python
-  number: 3
+  number: 1
   entry_points:
     - dia_ui = dia_ui.server:main
 
