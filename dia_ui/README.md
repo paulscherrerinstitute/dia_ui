@@ -3,9 +3,9 @@
 This projects combines provides DIA functionalities and configuration  of the components.
 
 # Server
-1. Run the server-side Flask app:
+1. Run the server-side Flask app (from dia_ui/dia_ui/server):
 
-
+    
     ```sh
     (diaui)$ python app.py
     ```
@@ -13,10 +13,9 @@ This projects combines provides DIA functionalities and configuration  of the co
     Navigate to [http://localhost:5000](http://localhost:5000)
 
 # Client
-1. Run the client-side Vue app in a different terminal window:
+1. Run the client-side Vue app (from dia_ui/dia_ui/client):
 
     ```sh
-    $ cd client
     $ npm install
     $ npm run serve
     ```
@@ -25,4 +24,10 @@ This projects combines provides DIA functionalities and configuration  of the co
 
 # DIA
 
-Dia address must be adjusted (default: http://0.0.0.0:10000)
+Default dia address: http://0.0.0.0:10000
+
+1. Run the detector integration api (from dia_ui/dia_ui/server)
+    
+    ```sh
+    (diaui)$ python detector_integration_api/start_default_server.py
+    ```
