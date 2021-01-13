@@ -2,7 +2,6 @@
 
 This projects combines provides DIA functionalities and configuration  of the components.
 
-
 # Server
 1. Run the server-side Flask app:
 
@@ -13,7 +12,8 @@ This projects combines provides DIA functionalities and configuration  of the co
 
     Navigate to [http://localhost:5000](http://localhost:5000)
 
-2. Run the client-side Vue app in a different terminal window:
+# Client
+1. Run the client-side Vue app in a different terminal window:
 
     ```sh
     $ cd client
@@ -22,3 +22,7 @@ This projects combines provides DIA functionalities and configuration  of the co
     ```
 
     Navigate to [http://localhost:8080](http://localhost:8080)
+
+# DIA
+
+Dia address must be adjusted (default: http://0.0.0.0:10000)
